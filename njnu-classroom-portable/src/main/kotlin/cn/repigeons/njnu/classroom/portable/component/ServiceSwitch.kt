@@ -8,6 +8,6 @@ class ServiceSwitch(
     private val redisService: RedisService
 ) {
     var value: Boolean
-        private set(value) = redisService.set("serviceSwitch", value)
+        set(value) = redisService.set("serviceSwitch", value)
         get() = redisService["serviceSwitch"] == true
 }

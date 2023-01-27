@@ -15,7 +15,7 @@ private open class EmailConfig {
     @Value("\${spring.mail.host:}")
     private var host = ""
 
-    @Value("\${spring.mail.port:}")
+    @Value("\${spring.mail.port:0}")
     private var port = 0
 
     @Value("\${spring.mail.username:}")

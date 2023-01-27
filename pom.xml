@@ -11,6 +11,7 @@
     <modules>
         <module>njnu-classroom-mbg</module>
         <module>njnu-classroom-portable</module>
+        <module>njnu-classroom-portal</module>
     </modules>
 
     <properties>

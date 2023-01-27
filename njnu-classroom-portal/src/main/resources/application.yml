@@ -1,0 +1,14 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+
+jwt:
+  expire: 3600
+  secret: ''
+
+mp:
+  appid: wx42f3e578c5411a23
+  secret: ''

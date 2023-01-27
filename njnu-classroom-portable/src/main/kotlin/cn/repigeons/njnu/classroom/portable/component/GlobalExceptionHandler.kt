@@ -33,7 +33,7 @@ class GlobalExceptionHandler {
 
             e is HttpRequestMethodNotSupportedException -> CommonResponse.failed("请求方法错误[${request.method}]")
 
-            request.method in listOf("POST", "PUT", "DELETE") &&
+            request.method in listOf("POST", "DELETE", "PUT", "PATCH") &&
                     (e is HttpMediaTypeException || e is HttpMessageConversionException) -> {
                 val contentType = request.getHeader("Content-Type")
                 CommonResponse.failed("请求格式错误[${contentType}]")

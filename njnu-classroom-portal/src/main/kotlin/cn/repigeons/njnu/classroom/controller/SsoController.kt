@@ -1,8 +1,8 @@
 package cn.repigeons.njnu.classroom.controller
 
 import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.util.JwtUtil
 import cn.repigeons.njnu.classroom.model.Code2SessionResp
-import cn.repigeons.njnu.classroom.portable.util.JwtUtil
 import io.jsonwebtoken.impl.DefaultClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping

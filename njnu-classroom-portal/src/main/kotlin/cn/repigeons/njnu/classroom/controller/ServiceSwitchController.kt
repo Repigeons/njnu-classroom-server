@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.controller
 
 import cn.repigeons.commons.api.CommonResponse
-import cn.repigeons.njnu.classroom.portable.component.ServiceSwitch
+import cn.repigeons.njnu.classroom.commons.component.ServiceSwitch
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestParam

@@ -1,11 +1,13 @@
 .mvn/
 target/
-
 .gradle/
 build/
 
-.idea/
+### IDEs
 *.iml
-
+.idea/
 .fleet/
 .vscode/
+
+### Configurations
+**/resources/application-*

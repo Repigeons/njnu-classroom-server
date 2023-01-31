@@ -10,6 +10,7 @@ import cn.repigeons.njnu.classroom.mbg.model.Kcb
 import cn.repigeons.njnu.classroom.mbg.model.Timetable
 import cn.repigeons.njnu.classroom.model.KcbItem
 import cn.repigeons.njnu.classroom.model.TimeInfo
+import cn.repigeons.njnu.classroom.rpc.client.CoreClient
 import cn.repigeons.njnu.classroom.service.CookieService
 import cn.repigeons.njnu.classroom.service.SpiderService
 import com.google.gson.JsonParser
@@ -35,6 +36,7 @@ import java.util.concurrent.CompletableFuture
 open class SpiderServiceImpl(
     private val redissonClient: RedissonClient,
     private val sqlSessionFactory: SqlSessionFactory,
+    private val coreClient: CoreClient,
     @Lazy
     private val cookieService: CookieService,
     private val correctionMapper: CorrectionMapper,
@@ -61,6 +63,7 @@ open class SpiderServiceImpl(
         try {
             logger.info("开始课程信息收集工作...")
             this.actRun()
+            coreClient.flushCache()
         } finally {
             lock.unlock()
         }

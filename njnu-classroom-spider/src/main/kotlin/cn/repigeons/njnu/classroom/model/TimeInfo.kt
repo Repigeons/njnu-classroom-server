@@ -34,7 +34,7 @@ class TimeInfo {
     override fun toString(): String {
         return mapOf(
             *javaClass.fields.map {
-                Pair(it.name, it.get(this))
+                it.name to it.get(this)
             }.toTypedArray()
         ).toString()
     }

@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication
-open class SpiderApplication
+open class CoreApplication
 
 fun main(args: Array<String>) {
-    SpringUtils.context = runApplication<SpiderApplication>(*args)
+    SpringUtils.context = runApplication<CoreApplication>(*args)
 }

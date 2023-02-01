@@ -1,6 +1,6 @@
 spring:
   application:
-    name: njnu-classroom-core
+    name: njnu-classroom-explore
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/njnu_classroom
@@ -13,19 +13,12 @@ spring:
       host: 127.0.0.1
       port: 6379
       database: 0
-  mail:
-    host: smtp.repigeons.cn
-    port: 465
-    username: njnu-classroom@repigeons.cn
-    # password:
   cache:
     type: redis
 
 redis:
-  prefix: core
+  prefix: explore
   key:
-    classrooms: 'static:classrooms'
-    buildings-position: 'static:position:buildings'
+    grids: grids
   expire:
-    classrooms: 7d
-    buildings-position: 7d
+    grids: 7d

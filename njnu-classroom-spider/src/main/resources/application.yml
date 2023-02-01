@@ -17,7 +17,7 @@ spring:
     host: smtp.repigeons.cn
     port: 465
     username: njnu-classroom@repigeons.cn
-  #   password:
+    # password:
   cache:
     type: redis
 

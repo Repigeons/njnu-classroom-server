@@ -13,6 +13,11 @@ spring:
       host: 127.0.0.1
       port: 6379
       database: 0
+  mail:
+    host: smtp.repigeons.cn
+    port: 465
+    username: njnu-classroom@repigeons.cn
+    # password:
   cache:
     type: redis
 
@@ -20,5 +25,9 @@ redis:
   prefix: explore
   key:
     grids: grids
+    shuttle-stations-position: 'static:position:stations'
+    shuttle-route: 'shuttle:routes'
   expire:
     grids: 7d
+    shuttle-stations-position: 7d
+    shuttle-route: 3d

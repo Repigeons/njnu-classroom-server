@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: njnu-classroom-spider
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/njnu_classroom
@@ -15,7 +17,9 @@ spring:
     host: smtp.repigeons.cn
     port: 465
     username: njnu-classroom@repigeons.cn
-#   password:
+  #   password:
+  cache:
+    type: redis
 
 redis:
   prefix: spider

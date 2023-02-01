@@ -16,6 +16,10 @@
             <groupId>cn.repigeons.njnu.classroom</groupId>
             <artifactId>njnu-classroom-commons</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.repigeons.njnu.classroom</groupId>
+            <artifactId>njnu-classroom-mbg</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: njnu-classroom-core
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/njnu_classroom
@@ -16,6 +18,8 @@ spring:
     port: 465
     username: ''
     password: ''
+  cache:
+    type: redis
 
 redis:
   prefix: core

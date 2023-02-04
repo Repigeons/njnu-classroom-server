@@ -3,16 +3,15 @@ spring:
     name: njnu-classroom-portal
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3306/njnu_classroom
-    username: njnu_classroom
-    password: njnu-000
     hikari:
-      maximum-pool-size: 100
+      minimum-idle: 5
+      maximum-pool-size: 20
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
-      database: 0
+      connect-timeout: 1s
+      lettuce:
+        pool:
+          min-idle: 1
   cache:
     type: redis
 
@@ -29,3 +28,10 @@ jwt:
 mp:
   appid: wx42f3e578c5411a23
   secret: ''
+
+
+logging:
+  level:
+    root: info
+    cn.repigeons: debug
+    cn.repigeons.njnu.classroom.mbg: info

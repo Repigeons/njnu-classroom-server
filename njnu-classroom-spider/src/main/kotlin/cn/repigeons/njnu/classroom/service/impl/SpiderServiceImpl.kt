@@ -165,7 +165,7 @@ open class SpiderServiceImpl(
     @Cacheable("jxl-info")
     override fun getJxlInfo(): Map<String, List<Jas>> {
         val jasList = jasMapper.select { it }
-            .groupBy { it.jxldmDisplay!! }
+            .groupBy { it.jxldmDisplay }
         jasList.values.forEach { jasRecords ->
             jasRecords as MutableList
             jasRecords.sortBy { it.jasmc }
@@ -179,9 +179,9 @@ open class SpiderServiceImpl(
         CompletableFuture.supplyAsync {
             val thisWeek = timeInfo.ZC
             val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
-            val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm!!)
+            val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
             if (nextWeek != thisWeek) {
-                val kcb2 = getKcb(timeInfo.XNXQDM, nextWeek.toString(), classroom.jasdm!!)
+                val kcb2 = getKcb(timeInfo.XNXQDM, nextWeek.toString(), classroom.jasdm)
                 val weekday = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 4) % 7
                 for (day in 0..weekday) {
                     kcb[day] = kcb2[day]
@@ -237,8 +237,8 @@ open class SpiderServiceImpl(
         logger.debug("Corrections = {}", corrections)
 
         corrections.forEach { correction ->
-            if (correction.jcKs!! < correction.jcJs!!) {
-                for (jc in correction.jcKs!! until correction.jcJs!!)
+            if (correction.jcKs < correction.jcJs) {
+                for (jc in correction.jcKs until correction.jcJs)
                     timetableMapper.delete {
                         it.where(TimetableDynamicSqlSupport.weekday, isEqualTo(correction.weekday))
                             .and(TimetableDynamicSqlSupport.jasdm, isEqualTo(correction.jasdm))
@@ -268,9 +268,7 @@ open class SpiderServiceImpl(
                 TimetableDynamicSqlSupport.jsmph,
                 TimetableDynamicSqlSupport.jcJs,
             )
-        }.groupBy {
-            it.jxlmc!!
-        }
+        }.groupBy { it.jxlmc }
         val result = mutableMapOf<String, MutableList<Timetable>>()
         data.map { (jxlmc, records) ->
             mergeJxl(jxlmc, records, result)

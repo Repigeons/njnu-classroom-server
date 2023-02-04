@@ -11,8 +11,8 @@
     <modules>
         <module>njnu-classroom-commons</module>
         <module>njnu-classroom-mbg</module>
-        <module>njnu-classroom-portal</module>
         <module>njnu-classroom-spider</module>
+        <module>njnu-classroom-portal</module>
         <module>njnu-classroom-core</module>
         <module>njnu-classroom-explore</module>
     </modules>

@@ -47,7 +47,7 @@ open class NoticeServiceImpl(
     }
 
     private fun record2data(record: Notice): NoticeVO {
-        val timestamp = record.time!!.time / 1000
+        val timestamp = record.time.time / 1000
         val date = df.format(record.time)
         return NoticeVO(
             id = record.id,

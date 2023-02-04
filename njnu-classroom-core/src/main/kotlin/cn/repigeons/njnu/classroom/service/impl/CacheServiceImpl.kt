@@ -89,12 +89,12 @@ open class CacheServiceImpl(
                 logger.debug("Flushing empty classroom: {}", key)
                 val value = records.map { record ->
                     EmptyClassroomVO(
-                        jasdm = record.jasdm!!,
-                        jsmph = record.jsmph!!,
-                        skzws = record.skzws!!,
-                        jcKs = record.jcKs!!,
-                        jcJs = record.jcJs!!,
-                        zylxdm = record.zylxdm!!,
+                        jasdm = record.jasdm,
+                        jsmph = record.jsmph,
+                        skzws = record.skzws,
+                        jcKs = record.jcKs,
+                        jcJs = record.jcJs,
+                        zylxdm = record.zylxdm,
                     )
                 }
                 key to value
@@ -109,7 +109,7 @@ open class CacheServiceImpl(
         redisService.del("overview")
         logger.info("开始刷新教室概览缓存...")
         val map = timetableMapper.select { it }
-            .groupBy { it.jasdm!! }
+            .groupBy { it.jasdm }
             .map { (key, records) ->
                 val classroomName = records.firstOrNull()?.let { it.jxlmc + it.jsmph }
                 logger.debug("Flushing overview: {}", classroomName)

@@ -6,6 +6,9 @@ import cn.repigeons.njnu.classroom.service.ShuttleService
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
+/**
+ * 校车时刻表
+ */
 @RestController
 @RequestMapping("shuttle")
 class ShuttleController(

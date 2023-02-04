@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * 发现栏列表
+ */
 @RestController
 class GridsController(
     private val gridsService: GridsService,

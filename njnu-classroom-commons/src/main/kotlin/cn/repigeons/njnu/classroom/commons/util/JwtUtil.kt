@@ -18,7 +18,7 @@ private open class JwtConfig(
 
 object JwtUtil {
     private val jwtConfig: JwtConfig = SpringUtils.getBean()
-    private const val TOKEN_HEAD = "Bearer"
+    const val TOKEN_HEAD = "Bearer"
 
     @Suppress("unused")
     fun generate(claims: Claims): String {

@@ -11,9 +11,8 @@ services:
 
   spider:
     restart: always
-    image: njnu-classroom-spider:production
-    build: /opt/njnu-classroom-server.git/njnu-classroom-spider
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    image: njnu-classroom.io/njnu-classroom-spider:develop
+    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
     depends_on:
     - redis
     environment:
@@ -24,9 +23,8 @@ services:
           memory: 512M
   portal:
     restart: always
-    image: njnu-classroom-portal:production
-    build: /opt/njnu-classroom-server.git/njnu-classroom-portal
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    image: njnu-classroom.io/njnu-classroom-portal:develop
+    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
     depends_on:
     - redis
     environment:
@@ -37,9 +35,8 @@ services:
           memory: 512M
   core:
     restart: always
-    image: njnu-classroom-core:production
-    build: /opt/njnu-classroom-server.git/njnu-classroom-core
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    image: njnu-classroom.io/njnu-classroom-core:develop
+    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
     depends_on:
     - redis
     environment:
@@ -50,9 +47,8 @@ services:
           memory: 512M
   explore:
     restart: always
-    image: njnu-classroom-explore:production
-    build: /opt/njnu-classroom-server.git/njnu-classroom-explore
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    image: njnu-classroom.io/njnu-classroom-explore:develop
+    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
     depends_on:
     - redis
     environment:
@@ -64,8 +60,7 @@ services:
 
   nginx:
     restart: always
-    image: njnu-classroom-nginx:latest
-    build: /opt/njnu-classroom-server.git/njnu-classroom-nginx
+    image: njnu-classroom.io/njnu-classroom-nginx:latest
     depends_on: ["spider", "portal", "core", "explore"]
     environment:
       TZ: Asia/Shanghai

@@ -1,5 +1,5 @@
 # docker build -f base.Dockerfile -t njnu-classroom-spider:base .
-FROM openjdk:18-slim
+FROM openjdk:17-slim
 
 RUN sed -i "s@http://deb.debian.org@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list \
  && sed -i "s@http://ftp.debian.org@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list \

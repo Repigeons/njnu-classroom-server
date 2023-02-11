@@ -24,7 +24,7 @@ redis:
   prefix: explore
   key:
     grids: grids
-    shuttle-stations-position: 'static:position:stations'
+    shuttle-stations-position: 'static::position:stations'
     shuttle-route: 'shuttle:routes'
   expire:
     grids: 7d

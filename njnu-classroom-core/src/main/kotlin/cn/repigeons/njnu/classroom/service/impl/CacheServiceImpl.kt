@@ -86,8 +86,7 @@ open class CacheServiceImpl(
                 "${it.jxlmc}:${it.weekday}"
             }
             .map { (key, records) ->
-                logger.debug("Flushing empty classroom: {}", key)
-                val value = records.map { record ->
+                key to records.map { record ->
                     EmptyClassroomVO(
                         jasdm = record.jasdm,
                         jsmph = record.jsmph,
@@ -97,7 +96,6 @@ open class CacheServiceImpl(
                         zylxdm = record.zylxdm,
                     )
                 }
-                key to value
             }
             .toTypedArray()
             .let { mapOf(*it) }
@@ -111,10 +109,7 @@ open class CacheServiceImpl(
         val map = timetableMapper.select { it }
             .groupBy { it.jasdm }
             .map { (key, records) ->
-                val classroomName = records.firstOrNull()?.let { it.jxlmc + it.jsmph }
-                logger.debug("Flushing overview: {}", classroomName)
-                val value = records.map { TimetableVO(it) }
-                key to value
+                key to records.map { TimetableVO(it) }
             }
             .toTypedArray()
             .let { mapOf(*it) }

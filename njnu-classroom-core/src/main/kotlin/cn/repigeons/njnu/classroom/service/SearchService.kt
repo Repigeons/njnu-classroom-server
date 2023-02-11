@@ -9,7 +9,7 @@ interface SearchService {
         jcKs: Short,
         jcJs: Short,
         weekday: Weekday?,
-        jxl: String?,
+        jxlmc: String?,
         keyword: String?,
         page: Int,
         size: Int

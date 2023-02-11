@@ -23,7 +23,7 @@ class SearchServiceImpl(
         jcKs: Short,
         jcJs: Short,
         weekday: Weekday?,
-        jxl: String?,
+        jxlmc: String?,
         keyword: String?,
         page: Int,
         size: Int,
@@ -35,7 +35,7 @@ class SearchServiceImpl(
             weekday?.run {
                 dsl.and(TimetableDynamicSqlSupport.weekday, isEqualTo(this.name))
             }
-            jxl?.run {
+            jxlmc?.run {
                 dsl.and(TimetableDynamicSqlSupport.jxlmc, isEqualTo(this))
             }
             keyword?.run {
@@ -45,7 +45,7 @@ class SearchServiceImpl(
                 weekday?.run {
                     dsl.and(TimetableDynamicSqlSupport.weekday, isEqualTo(this.name))
                 }
-                jxl?.run {
+                jxlmc?.run {
                     dsl.and(TimetableDynamicSqlSupport.jxlmc, isEqualTo(this))
                 }
                 dsl.and(TimetableDynamicSqlSupport.jcJs, isLessThanOrEqualTo(jcJs))

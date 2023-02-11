@@ -52,7 +52,7 @@ class QueryController(
             jcKs = jcKs,
             jcJs = jcJs,
             weekday = weekday,
-            jxl = if (jxlmc == "#" || jxlmc.isEmpty()) null else jxlmc,
+            jxlmc = if (jxlmc == "#" || jxlmc.isEmpty()) null else jxlmc,
             keyword = if (keyword == "#" || keyword.isBlank()) null else keyword,
             page = page,
             size = size

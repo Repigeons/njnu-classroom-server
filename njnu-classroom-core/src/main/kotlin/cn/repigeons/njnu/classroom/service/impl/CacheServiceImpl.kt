@@ -77,7 +77,7 @@ open class CacheServiceImpl(
     }
 
     private fun flushEmptyClassrooms(): CompletableFuture<*> = CompletableFuture.supplyAsync {
-        redisService.del("empty")
+        redisService.del("core::empty")
         logger.info("开始刷新空教室缓存...")
         val map = timetableMapper.select {
             it.where(TimetableDynamicSqlSupport.zylxdm, isIn("00", "10", "11"))
@@ -101,12 +101,12 @@ open class CacheServiceImpl(
             }
             .toTypedArray()
             .let { mapOf(*it) }
-        redisService.hSetAll("empty", map)
+        redisService.hSetAll("core::empty", map)
         logger.info("空教室缓存刷新完成")
     }
 
     private fun flushOverview(): CompletableFuture<*> = CompletableFuture.supplyAsync {
-        redisService.del("overview")
+        redisService.del("core::overview")
         logger.info("开始刷新教室概览缓存...")
         val map = timetableMapper.select { it }
             .groupBy { it.jasdm }
@@ -118,7 +118,7 @@ open class CacheServiceImpl(
             }
             .toTypedArray()
             .let { mapOf(*it) }
-        redisService.hSetAll("overview", map)
+        redisService.hSetAll("core::overview", map)
         logger.info("教室概览缓存刷新完成")
     }
 }

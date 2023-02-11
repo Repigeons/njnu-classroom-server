@@ -10,7 +10,7 @@ class OverviewServiceImpl(
     private val redisService: RedisService
 ) : OverviewService {
     override fun getOverview(jasdm: String): List<TimetableVO> =
-        requireNotNull(redisService.hGet("overview", jasdm) as List<*>?) {
+        requireNotNull(redisService.hGet("core::overview", jasdm) as List<*>?) {
             "无效参数: [jasdm]"
         }.map { it as TimetableVO }
 }

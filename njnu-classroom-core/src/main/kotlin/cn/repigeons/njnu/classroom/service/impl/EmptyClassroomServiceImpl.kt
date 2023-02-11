@@ -30,12 +30,12 @@ class EmptyClassroomServiceImpl(
     @Value("\${spring.mail.receivers}")
     val receivers: Array<String>
 ) : EmptyClassroomService {
-    override fun getEmptyClassrooms(jxl: String, weekday: Weekday?, jc: Short): List<EmptyClassroomVO> {
-        requireNotNull(weekday) { "无效参数: [weekday]" }
-        require(jc in 1..12) { "无效参数: [jc]" }
-        val classrooms = requireNotNull(redisService.hGet("empty", "$jxl:${weekday.name}") as List<*>?) {
-            "无效参数: [jxl]"
-        }
+    override fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO> {
+        if (jc !in 1..12) return emptyList()
+        val jxlmcList = cacheService.getBuildingPositions().map { it.name }
+        if (jxlmc !in jxlmcList) return emptyList()
+        val classrooms = redisService.hGet("core::empty", "$jxlmc:${weekday.name}") as List<*>?
+            ?: return emptyList()
         return classrooms.mapNotNull { classroom ->
             classroom as EmptyClassroomVO
             if (jc in classroom.jcKs..classroom.jcJs)
@@ -108,7 +108,7 @@ class EmptyClassroomServiceImpl(
             return@supplyAsync
         } else {
             val map = autoCorrect(
-                jxl = jxlmc,
+                jxlmc = jxlmc,
                 jasdm = item.jasdm,
                 jsmph = item.jsmph,
                 weekday = weekday,
@@ -132,7 +132,7 @@ class EmptyClassroomServiceImpl(
     }
 
     private fun autoCorrect(
-        jxl: String,
+        jxlmc: String,
         jasdm: String,
         jsmph: String,
         weekday: Weekday,
@@ -150,7 +150,7 @@ class EmptyClassroomServiceImpl(
             correctionMapper.insertSelective(
                 Correction().apply {
                     this.weekday = weekday.name
-                    this.jxlmc = jxl
+                    this.jxlmc = jxlmc
                     this.jsmph = jsmph
                     this.jasdm = jasdm
                     this.jcKs = jc

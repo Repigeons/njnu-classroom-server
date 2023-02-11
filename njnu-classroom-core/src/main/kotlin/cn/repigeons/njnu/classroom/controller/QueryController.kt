@@ -63,7 +63,7 @@ class QueryController(
     @GetMapping("classrooms.json")
     fun getClassrooms() = CommonResponse.success(cacheService.getClassrooms())
 
-    @GetMapping("positions.json")
+    @GetMapping("buildings.json")
     fun getPosition() = CommonResponse.success(cacheService.getBuildingPositions())
 
     @GetMapping("zylxdm.json")

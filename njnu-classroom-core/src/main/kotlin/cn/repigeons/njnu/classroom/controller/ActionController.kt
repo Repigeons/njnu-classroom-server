@@ -42,10 +42,4 @@ class ActionController(
         cacheService.flushClassrooms()
         return CommonResponse.success()
     }
-
-    @PostMapping("position/buildings/flush")
-    fun flushBuildingPosition(): CommonResponse<*> {
-        cacheService.flushBuildingPositions()
-        return CommonResponse.success()
-    }
 }

@@ -76,6 +76,9 @@ class UserTimetableController(
         )
     }
 
+    /**
+     * 删除用户时间表
+     */
     @DeleteMapping("timetable")
     fun deleteTimetable(
         @RequestHeader("Authorization") token: String,

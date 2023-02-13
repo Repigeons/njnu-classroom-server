@@ -15,7 +15,7 @@
         <dependency>
             <groupId>cn.repigeons</groupId>
             <artifactId>spring-boot-commons</artifactId>
-            <version>1.0.1-RELEASE</version>
+            <version>${commons.version}</version>
         </dependency>
         <!-- web -->
         <dependency>

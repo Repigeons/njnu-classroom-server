@@ -29,9 +29,9 @@ redis:
   prefix: spider
   key:
     cookies: 'cookies'
-    time-info: 'time:info'
-    jxl-info: 'classroom:jxl'
-    classroom-info: 'classroom:info'
+    time-info: 'time::info'
+    jxl-info: 'classroom::jxl'
+    classroom-info: 'classroom::info'
   expire:
     cookies: 30m
     time-info: 3d

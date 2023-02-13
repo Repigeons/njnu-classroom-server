@@ -56,7 +56,7 @@ open class SpiderServiceImpl(
 
     @Scheduled(cron = "0 0 8 * * ?")
     override fun run(): CompletableFuture<*> = CompletableFuture.supplyAsync {
-        val lock = redissonClient.getLock("lock:spider")
+        val lock = redissonClient.getLock("lock::spider")
         if (!lock.tryLock()) {
             logger.info("课程信息收集工作已处于运行中...")
             return@supplyAsync

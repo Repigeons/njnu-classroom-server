@@ -8,6 +8,7 @@ import cn.repigeons.njnu.classroom.mbg.mapper.*
 import cn.repigeons.njnu.classroom.mbg.model.Jas
 import cn.repigeons.njnu.classroom.mbg.model.Kcb
 import cn.repigeons.njnu.classroom.mbg.model.Timetable
+import cn.repigeons.njnu.classroom.model.JxlInfo
 import cn.repigeons.njnu.classroom.model.KcbItem
 import cn.repigeons.njnu.classroom.model.TimeInfo
 import cn.repigeons.njnu.classroom.rpc.client.CoreClient
@@ -75,13 +76,14 @@ open class SpiderServiceImpl(
         httpClient = cookieService.getHttpClient(cookies)
         logger.info("开始采集基础信息...")
         val timeInfo = `this`.getTimeInfo()
-        val jxlInfo = `this`.getJxlInfo()
+        val jxlInfoList = `this`.getJxlInfo()
         logger.info("基础信息采集完成.")
 
         logger.info("开始采集课程信息...")
         kcbDAO.truncate()
-        jxlInfo.forEach { (buildingName, classroomList) ->
-            logger.info("开始查询教学楼[{}]...", buildingName)
+        jxlInfoList.forEach { jxlInfo ->
+            val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
+            logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
             classroomList.map { classroom ->
                 logger.debug("正在查询教室[{}]...", classroom.jasmc)
                 getClassInfo(classroom, timeInfo)
@@ -162,17 +164,41 @@ open class SpiderServiceImpl(
         return timeInfo
     }
 
+//    @Cacheable("jxl-info")
+//    override fun getJxlInfo(): List<JxlInfo> {
+//        val jasList = jasMapper.select { it }
+//            .groupBy { it.jxldmDisplay }
+//        jasList.values.forEach { jasRecords ->
+//            jasRecords as MutableList
+//            jasRecords.sortBy { it.jasmc }
+//        }
+//        return jasList.map { (jxlmc, jasRecords) ->
+//            jxlmc to jasRecords.sortedBy { it.jasmc }
+//        }.toTypedArray().let { mapOf(*it) }
+//    }
+
     @Cacheable("jxl-info")
-    override fun getJxlInfo(): Map<String, List<Jas>> {
-        val jasList = jasMapper.select { it }
-            .groupBy { it.jxldmDisplay }
-        jasList.values.forEach { jasRecords ->
-            jasRecords as MutableList
-            jasRecords.sortBy { it.jasmc }
+    override fun getJxlInfo(): List<JxlInfo> {
+        val map = jasMapper.select { it }
+            .groupBy { it.jxldm }
+        return map.map { (_, list) ->
+            val item = list.first()
+            JxlInfo(
+                jxldm = item.jxldm,
+                jxlmc = item.jxldmDisplay,
+                xxxqdm = item.xxxqdm,
+                xxxqmc = item.xxxqdmDisplay
+            )
         }
-        return jasList.map { (jxlmc, jasRecords) ->
-            jxlmc to jasRecords.sortedBy { it.jasmc }
-        }.toTypedArray().let { mapOf(*it) }
+    }
+
+    @Cacheable("classroom-info", key = "#jxldm")
+    override fun getClassrooms(jxldm: String): List<Jas> {
+        return jasMapper.select {
+            it.where(
+                JasDynamicSqlSupport.jxldm, isEqualTo(jxldm)
+            )
+        }
     }
 
     private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<*> =

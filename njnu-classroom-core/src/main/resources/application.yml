@@ -34,7 +34,6 @@ redis:
     classrooms: 7d
     buildings-position: 7d
 
-
 logging:
   level:
     root: info

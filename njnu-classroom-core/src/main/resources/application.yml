@@ -9,14 +9,14 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
+      minimum-idle: 10
+      maximum-pool-size: 100
   data:
     redis:
       connect-timeout: 1s
       lettuce:
         pool:
-          min-idle: 1
+          min-idle: 3
   cache:
     type: redis
   mail:

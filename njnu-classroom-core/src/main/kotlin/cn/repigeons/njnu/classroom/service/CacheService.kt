@@ -5,8 +5,8 @@ import cn.repigeons.njnu.classroom.model.PositionVO
 import java.util.concurrent.CompletableFuture
 
 interface CacheService {
-    fun getClassrooms(): Map<String, List<ClassroomVO>>
-    fun flushClassrooms(): Map<String, List<ClassroomVO>>
+    fun getClassrooms(): List<ClassroomVO>
+    fun flushClassrooms(): List<ClassroomVO>
 
     fun getBuildingPositions(): List<PositionVO>
     fun flushBuildingPositions(): List<PositionVO>

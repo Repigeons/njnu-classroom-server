@@ -30,7 +30,7 @@ class QueryController(
         return CommonResponse.success(result)
     }
 
-    @GetMapping("classroomOverview")
+    @GetMapping("overview")
     fun getOverview(
         @RequestParam jasdm: String
     ): CommonResponse<*> {
@@ -60,12 +60,21 @@ class QueryController(
         return CommonResponse.success(result)
     }
 
+    /**
+     * 教室列表
+     */
     @GetMapping("classrooms.json")
     fun getClassrooms() = CommonResponse.success(cacheService.getClassrooms())
 
+    /**
+     * 教学楼位置
+     */
     @GetMapping("buildings.json")
     fun getPosition() = CommonResponse.success(cacheService.getBuildingPositions())
 
+    /**
+     * 资源类型代码
+     */
     @GetMapping("zylxdm.json")
     fun getZylxdm() = CommonResponse.success(Resources.zylxdm)
 }

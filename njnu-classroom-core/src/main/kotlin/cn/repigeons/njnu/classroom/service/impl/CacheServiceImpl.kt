@@ -27,19 +27,25 @@ open class CacheServiceImpl(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Cacheable("classrooms")
-    override fun getClassrooms() = flushClassrooms()
+    override fun getClassrooms(): List<ClassroomVO> = flushClassrooms()
 
     @CachePut("classrooms")
-    override fun flushClassrooms(): Map<String, List<ClassroomVO>> {
+    override fun flushClassrooms(): List<ClassroomVO> {
         return jasMapper.select { it }
             .map {
-                ClassroomVO(
+                ClassroomVO.ClassroomItemVO(
                     jxlmc = it.jxldmDisplay,
                     jsmph = it.jasmc?.replace(Regex("^${it.jxldmDisplay}"), "")?.trim(),
                     jasdm = it.jasdm,
                 )
             }
             .groupBy { it.jxlmc }
+            .map { (jxlmc, list) ->
+                ClassroomVO(
+                    jxlmc = jxlmc,
+                    list = list
+                )
+            }
     }
 
     @Cacheable("buildings-position")

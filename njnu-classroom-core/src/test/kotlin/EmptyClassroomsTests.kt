@@ -48,5 +48,7 @@ class EmptyClassroomsTests {
         val serializer = redisTemplate.hashValueSerializer as Repigeons2JsonRedisSerializer<Any>
         val bytes = serializer.serialize(pairs.first().second)
         println(bytes.toString(StandardCharsets.UTF_8))
+        val result = serializer.deserialize(bytes)
+        println(result)
     }
 }

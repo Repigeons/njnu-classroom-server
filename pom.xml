@@ -33,12 +33,6 @@
             <id>repigeons</id>
             <name>复读鸽公共仓库</name>
             <url>https://mirrors.repigeons.cn/repository/maven-public/</url>
-            <releases>
-                <updatePolicy>daily</updatePolicy>
-            </releases>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
         </repository>
     </repositories>
 
@@ -55,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
+            <artifactId>kotlin-test-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

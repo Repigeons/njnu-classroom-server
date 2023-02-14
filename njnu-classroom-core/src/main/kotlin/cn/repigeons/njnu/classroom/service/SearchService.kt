@@ -10,6 +10,7 @@ interface SearchService {
         jcJs: Short,
         weekday: Weekday?,
         jxlmc: String?,
+        zylxdm: String?,
         keyword: String?,
         page: Int,
         size: Int

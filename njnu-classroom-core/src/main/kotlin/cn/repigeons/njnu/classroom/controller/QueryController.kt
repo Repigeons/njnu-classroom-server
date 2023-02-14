@@ -7,6 +7,8 @@ import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import cn.repigeons.njnu.classroom.service.OverviewService
 import cn.repigeons.njnu.classroom.service.SearchService
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -40,22 +42,23 @@ class QueryController(
 
     @GetMapping("search")
     fun getSearch(
-        @RequestParam weekday: Weekday,
+        @RequestParam(required = false) weekday: Weekday?,
         @RequestParam jcKs: Short,
         @RequestParam jcJs: Short,
-        @RequestParam jxlmc: String,
-        @RequestParam keyword: String,
-        @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "") jxlmc: String,
+        @RequestParam(defaultValue = "") zylxdm: String,
+        @RequestParam(defaultValue = "") keyword: String,
+        @PageableDefault(page = 1) pageable: Pageable,
     ): CommonResponse<*> {
         val result = searchService.search(
             jcKs = jcKs,
             jcJs = jcJs,
             weekday = weekday,
-            jxlmc = if (jxlmc == "#" || jxlmc.isEmpty()) null else jxlmc,
-            keyword = if (keyword == "#" || keyword.isBlank()) null else keyword,
-            page = page,
-            size = size
+            jxlmc = jxlmc.takeUnless { it.isEmpty() },
+            keyword = keyword.takeUnless { it.isEmpty() },
+            zylxdm = zylxdm.takeUnless { it.isEmpty() },
+            page = pageable.pageNumber,
+            size = pageable.pageSize,
         )
         return CommonResponse.success(result)
     }

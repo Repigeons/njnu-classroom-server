@@ -9,10 +9,7 @@ import cn.repigeons.njnu.classroom.model.TimetableVO
 import cn.repigeons.njnu.classroom.service.SearchService
 import com.github.pagehelper.PageHelper
 import com.github.pagehelper.PageInfo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isGreaterThanOrEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isLessThanOrEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isLike
+import org.mybatis.dynamic.sql.util.kotlin.elements.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,6 +21,7 @@ class SearchServiceImpl(
         jcJs: Short,
         weekday: Weekday?,
         jxlmc: String?,
+        zylxdm: String?,
         keyword: String?,
         page: Int,
         size: Int,
@@ -38,18 +36,14 @@ class SearchServiceImpl(
             jxlmc?.run {
                 dsl.and(TimetableDynamicSqlSupport.jxlmc, isEqualTo(this))
             }
+            zylxdm?.run {
+                dsl.and(TimetableDynamicSqlSupport.zylxdm, isEqualTo(this))
+            }
             keyword?.run {
                 val value = "%$this%"
-                dsl.and(TimetableDynamicSqlSupport.kcm, isLike(value))
-                    .or(TimetableDynamicSqlSupport.jyytms, isLike(value))
-                weekday?.run {
-                    dsl.and(TimetableDynamicSqlSupport.weekday, isEqualTo(this.name))
-                }
-                jxlmc?.run {
-                    dsl.and(TimetableDynamicSqlSupport.jxlmc, isEqualTo(this))
-                }
-                dsl.and(TimetableDynamicSqlSupport.jcJs, isLessThanOrEqualTo(jcJs))
-                dsl.and(TimetableDynamicSqlSupport.jcKs, isGreaterThanOrEqualTo(jcKs))
+                dsl.and(TimetableDynamicSqlSupport.kcm, isLike(value), or {
+                    it.where(TimetableDynamicSqlSupport.jyytms, isLike(value))
+                })
             }
         }
         val pageInfo = PageInfo(records)

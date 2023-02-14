@@ -4,7 +4,7 @@ import cn.repigeons.njnu.classroom.mbg.mapper.GridsDynamicSqlSupport
 import cn.repigeons.njnu.classroom.mbg.mapper.GridsMapper
 import cn.repigeons.njnu.classroom.model.GridVO
 import cn.repigeons.njnu.classroom.service.GridsService
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
+import org.mybatis.dynamic.sql.util.kotlin.elements.isTrue
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ open class GridsServiceImpl(
     @CachePut("grids")
     override fun flushGrids(): List<GridVO> {
         val records = gridsMapper.select {
-            it.where(GridsDynamicSqlSupport.active, isEqualTo(true))
+            it.where(GridsDynamicSqlSupport.active, isTrue())
         }
         return records.map { GridVO(it) }
     }

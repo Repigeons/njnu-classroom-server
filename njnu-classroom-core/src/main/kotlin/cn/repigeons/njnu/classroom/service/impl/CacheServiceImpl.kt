@@ -85,41 +85,28 @@ open class CacheServiceImpl(
     private fun flushEmptyClassrooms(): CompletableFuture<*> = CompletableFuture.supplyAsync {
         redisService.del("core::empty")
         logger.info("开始刷新空教室缓存...")
-        val map = timetableMapper.select {
+        val pairs = timetableMapper.select {
             it.where(TimetableDynamicSqlSupport.zylxdm, isIn("00", "10", "11"))
         }
             .groupBy {
                 "${it.jxlmc}:${it.weekday}"
             }
             .map { (key, records) ->
-                key to records.map { record ->
-                    EmptyClassroomVO(
-                        jasdm = record.jasdm,
-                        jsmph = record.jsmph,
-                        skzws = record.skzws,
-                        jcKs = record.jcKs,
-                        jcJs = record.jcJs,
-                        zylxdm = record.zylxdm,
-                    )
-                }
+                key to records.map { EmptyClassroomVO(it) }
             }
-            .toTypedArray()
-            .let { mapOf(*it) }
-        redisService.hSetAll("core::empty", map)
+        redisService.hSetAll("core::empty", mapOf(*pairs.toTypedArray()))
         logger.info("空教室缓存刷新完成")
     }
 
     private fun flushOverview(): CompletableFuture<*> = CompletableFuture.supplyAsync {
         redisService.del("core::overview")
         logger.info("开始刷新教室概览缓存...")
-        val map = timetableMapper.select { it }
+        val pairs = timetableMapper.select { it }
             .groupBy { it.jasdm }
             .map { (key, records) ->
                 key to records.map { TimetableVO(it) }
             }
-            .toTypedArray()
-            .let { mapOf(*it) }
-        redisService.hSetAll("core::overview", map)
+        redisService.hSetAll("core::overview", mapOf(*pairs.toTypedArray()))
         logger.info("教室概览缓存刷新完成")
     }
 }

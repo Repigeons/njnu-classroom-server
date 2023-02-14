@@ -4,6 +4,7 @@ import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.mbg.model.Timetable
 
 data class TimetableVO(
+    val id: Int,
     /**
      * 教学楼名称
      */
@@ -42,6 +43,7 @@ data class TimetableVO(
     val kcm: String,
 ) {
     constructor(record: Timetable) : this(
+        id = record.id,
         jxlmc = record.jxlmc,
         jsmph = record.jsmph,
         skzws = record.skzws,

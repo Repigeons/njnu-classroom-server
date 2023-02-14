@@ -28,9 +28,9 @@ spring:
 redis:
   prefix: explore
   key:
-    grids: grids
-    shuttle-stations-position: 'static::position:stations'
-    shuttle-route: 'shuttle:routes'
+    grids: 'grids'
+    shuttle-stations-position: 'static::position::stations'
+    shuttle-route: 'shuttle::routes'
   expire:
     grids: 7d
     shuttle-stations-position: 7d

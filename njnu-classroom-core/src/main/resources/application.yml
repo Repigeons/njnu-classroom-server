@@ -29,7 +29,7 @@ redis:
   prefix: core
   key:
     classrooms: 'static::classrooms'
-    buildings-position: 'static::position:buildings'
+    buildings-position: 'static::position::buildings'
   expire:
     classrooms: 7d
     buildings-position: 7d

@@ -25,7 +25,7 @@
         <java.version>17</java.version>
         <spring.boot.version>3.0.2</spring.boot.version>
         <spring.cloud.version>2022.0.0</spring.cloud.version>
-        <commons.version>1.0.2-SNAPSHOT</commons.version>
+        <commons.version>1.0.2-RELEASE</commons.version>
     </properties>
 
     <repositories>

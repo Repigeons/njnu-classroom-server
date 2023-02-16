@@ -10,20 +10,19 @@ import cn.repigeons.njnu.classroom.model.ShuttleRoute
 import cn.repigeons.njnu.classroom.service.ShuttleService
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
 @Service
+@RefreshScope
 open class ShuttleServiceImpl(
     private val shuttleDAO: ShuttleDAO,
     private val positionsMapper: PositionsMapper,
-    @Value("\${spring.mail.receivers}")
-    val receivers: Array<String>
 ) : ShuttleService {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -70,8 +69,7 @@ open class ShuttleServiceImpl(
                 nickname = "南师教室",
                 subject = "【南师教室】有人上传校车时刻表.${extension}",
                 content = "${filename}\n${attachment.name}",
-                receivers = receivers,
-                attachment
+                attachments = arrayOf(attachment),
             )
         }
 }

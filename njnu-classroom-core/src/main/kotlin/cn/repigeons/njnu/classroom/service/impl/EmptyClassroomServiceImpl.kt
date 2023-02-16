@@ -5,7 +5,10 @@ import cn.repigeons.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.commons.util.EmailUtil
 import cn.repigeons.njnu.classroom.mbg.dao.FeedbackDAO
-import cn.repigeons.njnu.classroom.mbg.mapper.*
+import cn.repigeons.njnu.classroom.mbg.mapper.CorrectionMapper
+import cn.repigeons.njnu.classroom.mbg.mapper.FeedbackMapper
+import cn.repigeons.njnu.classroom.mbg.mapper.TimetableDynamicSqlSupport
+import cn.repigeons.njnu.classroom.mbg.mapper.TimetableMapper
 import cn.repigeons.njnu.classroom.mbg.model.Correction
 import cn.repigeons.njnu.classroom.mbg.model.Feedback
 import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
@@ -13,7 +16,6 @@ import cn.repigeons.njnu.classroom.rpc.client.SpiderClient
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -27,8 +29,6 @@ class EmptyClassroomServiceImpl(
     private val feedbackMapper: FeedbackMapper,
     private val feedbackDAO: FeedbackDAO,
     private val correctionMapper: CorrectionMapper,
-    @Value("\${spring.mail.receivers}")
-    val receivers: Array<String>
 ) : EmptyClassroomService {
     override fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO> {
         if (jc !in 1..12) return emptyList()
@@ -89,7 +89,6 @@ class EmptyClassroomServiceImpl(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
-                receivers = receivers
             )
             return@supplyAsync
         }
@@ -103,7 +102,6 @@ class EmptyClassroomServiceImpl(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
-                receivers = receivers
             )
             return@supplyAsync
         } else {
@@ -125,7 +123,6 @@ class EmptyClassroomServiceImpl(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
-                receivers = receivers
             )
             return@supplyAsync
         }

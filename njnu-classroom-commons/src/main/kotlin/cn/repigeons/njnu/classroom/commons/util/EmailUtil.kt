@@ -3,6 +3,7 @@ package cn.repigeons.njnu.classroom.commons.util
 import cn.repigeons.commons.utils.SpringUtils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
@@ -10,8 +11,12 @@ import org.springframework.mail.javamail.MimeMessageHelper
 import java.io.File
 import java.util.*
 
+@RefreshScope
 @Configuration
 private open class EmailConfig {
+    @Value("\${spring.mail.receivers}")
+    val receivers: Array<String> = arrayOf()
+
     @Value("\${spring.mail.host:}")
     private var host = ""
 
@@ -54,7 +59,7 @@ object EmailUtil {
         nickname: String? = null,
         subject: String,
         content: String,
-        receivers: Array<String>,
+        receivers: Array<String> = emailConfig.receivers,
         ccReceivers: Array<String>? = null,
         html: Boolean = false
     ) {
@@ -86,7 +91,7 @@ object EmailUtil {
         nickname: String? = null,
         subject: String,
         content: String,
-        receivers: Array<String>,
+        receivers: Array<String> = emailConfig.receivers,
         vararg attachments: File
     ) {
         logger.info("发送邮件：{},{},{},{}", subject, content, receivers, attachments)

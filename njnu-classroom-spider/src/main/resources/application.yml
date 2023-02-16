@@ -2,8 +2,6 @@ server:
   shutdown: graceful
 
 spring:
-  application:
-    name: njnu-classroom-spider
   lifecycle:
     timeout-per-shutdown-phase: 10s
   datasource:
@@ -19,11 +17,6 @@ spring:
           min-idle: 3
   cache:
     type: redis
-  mail:
-    host: smtp.repigeons.cn
-    port: 465
-    username: njnu-classroom@repigeons.cn
-    # password:
 
 redis:
   prefix: spider
@@ -37,12 +30,6 @@ redis:
     time-info: 3d
     jxl-info: 3d
     classroom-info: 3d
-
-account:
-  username: ''
-  password: ''
-  gid: ''
-
 
 logging:
   level:

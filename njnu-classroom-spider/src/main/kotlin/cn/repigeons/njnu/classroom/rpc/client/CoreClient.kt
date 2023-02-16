@@ -6,8 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PostMapping
 
 @FeignClient(
-    name = "CoreClient",
-    url = "http://core:8080",
+    value = "njnu-classroom-core",
     fallback = CoreClientFallback::class
 )
 interface CoreClient {

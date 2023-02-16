@@ -1,4 +1,4 @@
-FROM njnu-classroom-spider:base
+FROM njnu-classroom.io/njnu-classroom-spider:base
 #FROM openjdk:17-slim
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' > /etc/timezone

@@ -2,8 +2,6 @@ server:
   shutdown: graceful
 
 spring:
-  application:
-    name: njnu-classroom-portal
   lifecycle:
     timeout-per-shutdown-phase: 10s
   datasource:
@@ -24,16 +22,12 @@ redis:
   prefix: portal
   key:
     notice: notice
-#  expire:
 
 jwt:
   expire: 3600
-  secret: ''
 
 mp:
   appid: wx42f3e578c5411a23
-  secret: ''
-
 
 logging:
   level:

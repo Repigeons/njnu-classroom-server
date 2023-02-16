@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @FeignClient(
-    name = "SpiderClient",
-    url = "http://spider:8080",
+    value = "njnu-classroom-spider",
     fallback = SpiderClientFallback::class
 )
 interface SpiderClient {

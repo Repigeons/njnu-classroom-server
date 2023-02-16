@@ -10,4 +10,4 @@ build/
 .vscode/
 
 ### Configurations
-**/resources/application-*
+**/resources/application-local.yml

@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: njnu-classroom-explore
+  cloud:
+    nacos:
+      server-addr: 10.144.0.252:8848
+      username: njnu-classroom
+      password: njnu-000
+      config:
+        namespace: njnu-classroom
+        group: ${spring.profiles.active}
+        file-extension: yaml
+      discovery:
+        namespace: njnu-classroom
+        group: ${spring.profiles.active}

@@ -33,11 +33,6 @@ publish: .init
 	# Update code
 	@git init /opt/njnu-classroom-server.git
 	@cd /opt/njnu-classroom-server.git && git fetch ${url} --depth=1 ${branch} && git reset --hard FETCH_HEAD
-	# Prepare application.yml before package
-	@cp /opt/njnu-classroom/application/spider-${env}.yml  /opt/njnu-classroom-server.git/njnu-classroom-spider/src/main/resources/application-${env}.yml
-	@cp /opt/njnu-classroom/application/portal-${env}.yml  /opt/njnu-classroom-server.git/njnu-classroom-portal/src/main/resources/application-${env}.yml
-	@cp /opt/njnu-classroom/application/core-${env}.yml    /opt/njnu-classroom-server.git/njnu-classroom-core/src/main/resources/application-${env}.yml
-	@cp /opt/njnu-classroom/application/explore-${env}.yml /opt/njnu-classroom-server.git/njnu-classroom-explore/src/main/resources/application-${env}.yml
 	# Compile & Package
 	@cd /opt/njnu-classroom-server.git && mvn clean kotlin:compile package -Dmaven.test.skip=true -am -pl "njnu-classroom-${service}"
 	# Build docker image & Startup
@@ -45,21 +40,17 @@ publish: .init
 	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push ${service}_${env}
 
 init: .init
-	@echo "Initialized."
+	# Initialized.
 .init:
 	docker --version
-	@echo "Initializing..."
+	# Initializing...
 	@git init /opt/njnu-classroom-server.git
 	@cd /opt/njnu-classroom-server.git && git fetch ${url} --depth=1 ${branch} && git reset --hard FETCH_HEAD
 	@mkdir -p /opt/njnu-classroom/application
-	@cp /opt/njnu-classroom-server.git/njnu-classroom-spider/src/main/resources/application.yml  /opt/njnu-classroom/application/spider.yml
-	@cp /opt/njnu-classroom-server.git/njnu-classroom-portal/src/main/resources/application.yml  /opt/njnu-classroom/application/portal.yml
-	@cp /opt/njnu-classroom-server.git/njnu-classroom-core/src/main/resources/application.yml    /opt/njnu-classroom/application/core.yml
-	@cp /opt/njnu-classroom-server.git/njnu-classroom-explore/src/main/resources/application.yml /opt/njnu-classroom/application/explore.yml
 	# Copy docker-compose.build.yaml
 	@cp /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml /opt/njnu-classroom/
 	# Build base image
-	@docker build -f /opt/njnu-classroom-server.git/njnu-classroom-spider/base.Dockerfile -t njnu-classroom-spider:base  /opt/njnu-classroom
+	@docker build -f /opt/njnu-classroom-server.git/njnu-classroom-spider/base.Dockerfile -t njnu-classroom.io/njnu-classroom-spider:base /opt/njnu-classroom
 	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml build nginx
 	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push nginx
 	# Completed

@@ -32,16 +32,7 @@ class EmptyClassroomsTests {
                 "${it.jxlmc}:${it.weekday}"
             }
             .map { (key, records) ->
-                key to records.map { record ->
-                    EmptyClassroomVO(
-                        jasdm = record.jasdm,
-                        jsmph = record.jsmph,
-                        skzws = record.skzws,
-                        jcKs = record.jcKs,
-                        jcJs = record.jcJs,
-                        zylxdm = record.zylxdm,
-                    )
-                }
+                key to records.map { EmptyClassroomVO(it) }
             }
 
         @Suppress("UNCHECKED_CAST")

@@ -7,6 +7,7 @@ import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
 import cn.repigeons.njnu.classroom.model.PositionVO
 import cn.repigeons.njnu.classroom.model.TimetableVO
 import cn.repigeons.njnu.classroom.service.CacheService
+import jakarta.annotation.PostConstruct
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
 import org.redisson.api.RedissonClient
@@ -63,6 +64,7 @@ open class CacheServiceImpl(
         }
     }
 
+    @PostConstruct
     override fun flushCache(): CompletableFuture<*> = CompletableFuture.supplyAsync {
         val lock = redissonClient.getLock("lock:flushCache")
         if (!lock.tryLock()) {

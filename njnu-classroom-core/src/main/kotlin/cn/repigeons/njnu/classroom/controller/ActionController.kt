@@ -15,10 +15,6 @@ class ActionController(
     private val cacheService: CacheService,
     private val emptyClassroomService: EmptyClassroomService
 ) {
-    init {
-        cacheService.flushCache()
-    }
-
     @PostMapping("flushCache")
     fun flushCache(): CommonResponse<*> {
         cacheService.flushCache()

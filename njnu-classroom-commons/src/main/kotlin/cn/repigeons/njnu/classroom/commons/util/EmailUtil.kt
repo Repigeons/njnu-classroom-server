@@ -14,7 +14,7 @@ import java.util.*
 @RefreshScope
 @Configuration
 private open class EmailConfig {
-    @Value("\${spring.mail.receivers}")
+    @Value("\${spring.mail.receivers:}")
     val receivers: Array<String> = arrayOf()
 
     @Value("\${spring.mail.host:}")

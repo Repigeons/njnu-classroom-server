@@ -34,8 +34,8 @@ class SsoController(
             .queryParam("grant_type", "authorization_code")
             .toUriString()
         val resp: Code2SessionResp = restTemplate.getForObject(url)
-        if (resp.errcode != 0) {
-            return CommonResponse.failed(resp.errmsg)
+        if (resp.errcode?.takeUnless { it == 0 } != null) {
+            return CommonResponse.failed(resp.errmsg ?: "jscode2session: ${resp.errcode}")
         }
         val token = JwtUtil.generate(DefaultClaims().setSubject(resp.openid))
         return CommonResponse.success(

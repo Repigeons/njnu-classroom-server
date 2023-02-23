@@ -3,7 +3,6 @@ package cn.repigeons.njnu.classroom.controller
 import cn.repigeons.commons.api.CommonResponse
 import cn.repigeons.njnu.classroom.commons.util.JwtUtil
 import cn.repigeons.njnu.classroom.model.Code2SessionResp
-import io.jsonwebtoken.impl.DefaultClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -37,7 +36,7 @@ class SsoController(
         if (resp.errcode?.takeUnless { it == 0 } != null) {
             return CommonResponse.failed(resp.errmsg ?: "jscode2session: ${resp.errcode}")
         }
-        val token = JwtUtil.generate(DefaultClaims().setSubject(resp.openid))
+        val token = JwtUtil.generate(resp.openid!!)
         return CommonResponse.success(
             mapOf(
                 "token" to token

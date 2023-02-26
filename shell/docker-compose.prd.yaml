@@ -13,6 +13,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-spider:production
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-spider:/logs
     depends_on:
     - redis
     environment:
@@ -25,6 +27,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-portal:production
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-portal:/logs
     depends_on:
     - redis
     environment:
@@ -37,6 +41,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-core:production
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-core:/logs
     depends_on:
     - redis
     environment:
@@ -49,6 +55,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-explore:production
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-explore:/logs
     depends_on:
     - redis
     environment:

@@ -12,7 +12,9 @@ services:
   spider:
     restart: always
     image: njnu-classroom.io/njnu-classroom-spider:develop
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
+    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "server.jar", "--spring.profiles.active=dev"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-spider:/logs
     depends_on:
     - redis
     environment:
@@ -25,6 +27,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-portal:develop
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-portal:/logs
     depends_on:
     - redis
     environment:
@@ -37,6 +41,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-core:develop
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-core:/logs
     depends_on:
     - redis
     environment:
@@ -49,6 +55,8 @@ services:
     restart: always
     image: njnu-classroom.io/njnu-classroom-explore:develop
     command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=dev"]
+    volumes:
+    - /opt/njnu-classroom/logs/njnu-classroom-explore:/logs
     depends_on:
     - redis
     environment:

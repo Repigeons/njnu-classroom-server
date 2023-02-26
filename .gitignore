@@ -9,5 +9,8 @@ build/
 .fleet/
 .vscode/
 
+### Loggings
+/logs/
+
 ### Configurations
 **/resources/application-local.yml

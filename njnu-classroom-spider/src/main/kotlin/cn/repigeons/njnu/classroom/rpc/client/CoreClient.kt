@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping
     fallback = CoreClientFallback::class
 )
 interface CoreClient {
-    @PostMapping("flushCache")
+    @PostMapping("/api/flushCache")
     fun flushCache(): CommonResponse<*>
 }

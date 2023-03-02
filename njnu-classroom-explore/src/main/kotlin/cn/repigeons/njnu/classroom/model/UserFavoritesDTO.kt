@@ -8,6 +8,10 @@ data class UserFavoritesDTO(
      */
     val id: Long,
     /**
+     * 标题
+     */
+    val title: String,
+    /**
      * 星期
      */
     val weekday: Weekday,

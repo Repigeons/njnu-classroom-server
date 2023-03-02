@@ -36,6 +36,7 @@ class UserFavoritesController(
         val data = records.map { record ->
             UserFavoritesDTO(
                 id = record.id,
+                title = record.title,
                 weekday = Weekday.valueOf(record.weekday),
                 jcKs = record.ksjc,
                 jcJs = record.jsjc,
@@ -60,6 +61,7 @@ class UserFavoritesController(
         val record = UserFavorites().apply {
             this.id = payload.id
             this.openid = openid
+            this.title = payload.title
             this.weekday = payload.weekday.name
             this.ksjc = payload.jcKs
             this.jsjc = payload.jcJs

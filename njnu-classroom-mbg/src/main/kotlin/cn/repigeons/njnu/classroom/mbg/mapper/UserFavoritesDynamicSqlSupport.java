@@ -19,6 +19,11 @@ public final class UserFavoritesDynamicSqlSupport {
     public static final SqlColumn<String> openid = userFavorites.openid;
 
     /**
+     * 标题
+     */
+    public static final SqlColumn<String> title = userFavorites.title;
+
+    /**
      * 星期
      */
     public static final SqlColumn<String> weekday = userFavorites.weekday;
@@ -52,6 +57,8 @@ public final class UserFavoritesDynamicSqlSupport {
         public final SqlColumn<Long> id = column("id", JDBCType.BIGINT);
 
         public final SqlColumn<String> openid = column("openid", JDBCType.VARCHAR);
+
+        public final SqlColumn<String> title = column("title", JDBCType.VARCHAR);
 
         public final SqlColumn<String> weekday = column("weekday", JDBCType.VARCHAR);
 

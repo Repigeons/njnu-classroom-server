@@ -15,6 +15,11 @@ public class UserFavorites {
     private String openid;
 
     /**
+     * 标题
+     */
+    private String title;
+
+    /**
      * 星期
      */
     private String weekday;
@@ -58,6 +63,14 @@ public class UserFavorites {
 
     public void setOpenid(String openid) {
         this.openid = openid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getWeekday() {

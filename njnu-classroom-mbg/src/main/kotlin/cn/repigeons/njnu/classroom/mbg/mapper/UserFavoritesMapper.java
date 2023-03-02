@@ -26,10 +26,15 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 
 @Mapper
 public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapper, CommonUpdateMapper {
-    BasicColumn[] selectList = BasicColumn.columnList(id, openid, weekday, ksjc, jsjc, place, color, remark);
+    BasicColumn[] selectList = BasicColumn.columnList(id, openid, title, weekday, ksjc, jsjc, place, color, remark);
+
+    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
+    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "row.id", before = false, resultType = Long.class)
+    int insert(InsertStatementProvider<UserFavorites> insertStatement);
 
     static UpdateDSL<UpdateModel> updateAllColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
         return dsl.set(openid).equalTo(row::getOpenid)
+                .set(title).equalTo(row::getTitle)
                 .set(weekday).equalTo(row::getWeekday)
                 .set(ksjc).equalTo(row::getKsjc)
                 .set(jsjc).equalTo(row::getJsjc)
@@ -37,33 +42,6 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
                 .set(color).equalTo(row::getColor)
                 .set(remark).equalTo(row::getRemark);
     }
-
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(openid).equalToWhenPresent(row::getOpenid)
-                .set(weekday).equalToWhenPresent(row::getWeekday)
-                .set(ksjc).equalToWhenPresent(row::getKsjc)
-                .set(jsjc).equalToWhenPresent(row::getJsjc)
-                .set(place).equalToWhenPresent(row::getPlace)
-                .set(color).equalToWhenPresent(row::getColor)
-                .set(remark).equalToWhenPresent(row::getRemark);
-    }
-
-    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
-    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "row.id", before = false, resultType = Long.class)
-    int insert(InsertStatementProvider<UserFavorites> insertStatement);
-
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @Results(id = "UserFavoritesResult", value = {
-            @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
-            @Result(column = "openid", property = "openid", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "weekday", property = "weekday", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "ksjc", property = "ksjc", jdbcType = JdbcType.SMALLINT),
-            @Result(column = "jsjc", property = "jsjc", jdbcType = JdbcType.SMALLINT),
-            @Result(column = "place", property = "place", jdbcType = JdbcType.VARCHAR),
-            @Result(column = "color", property = "color", jdbcType = JdbcType.CHAR),
-            @Result(column = "remark", property = "remark", jdbcType = JdbcType.LONGVARCHAR)
-    })
-    List<UserFavorites> selectMany(SelectStatementProvider selectStatement);
 
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @ResultMap("UserFavoritesResult")
@@ -83,29 +61,30 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
         );
     }
 
-    default int insert(UserFavorites row) {
-        return MyBatis3Utils.insert(this::insert, row, userFavorites, c ->
-                c.map(openid).toProperty("openid")
-                        .map(weekday).toProperty("weekday")
-                        .map(ksjc).toProperty("ksjc")
-                        .map(jsjc).toProperty("jsjc")
-                        .map(place).toProperty("place")
-                        .map(color).toProperty("color")
-                        .map(remark).toProperty("remark")
-        );
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(openid).equalToWhenPresent(row::getOpenid)
+                .set(title).equalToWhenPresent(row::getTitle)
+                .set(weekday).equalToWhenPresent(row::getWeekday)
+                .set(ksjc).equalToWhenPresent(row::getKsjc)
+                .set(jsjc).equalToWhenPresent(row::getJsjc)
+                .set(place).equalToWhenPresent(row::getPlace)
+                .set(color).equalToWhenPresent(row::getColor)
+                .set(remark).equalToWhenPresent(row::getRemark);
     }
 
-    default int insertSelective(UserFavorites row) {
-        return MyBatis3Utils.insert(this::insert, row, userFavorites, c ->
-                c.map(openid).toPropertyWhenPresent("openid", row::getOpenid)
-                        .map(weekday).toPropertyWhenPresent("weekday", row::getWeekday)
-                        .map(ksjc).toPropertyWhenPresent("ksjc", row::getKsjc)
-                        .map(jsjc).toPropertyWhenPresent("jsjc", row::getJsjc)
-                        .map(place).toPropertyWhenPresent("place", row::getPlace)
-                        .map(color).toPropertyWhenPresent("color", row::getColor)
-                        .map(remark).toPropertyWhenPresent("remark", row::getRemark)
-        );
-    }
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "UserFavoritesResult", value = {
+            @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "openid", property = "openid", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "title", property = "title", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "weekday", property = "weekday", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "ksjc", property = "ksjc", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "jsjc", property = "jsjc", jdbcType = JdbcType.SMALLINT),
+            @Result(column = "place", property = "place", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "color", property = "color", jdbcType = JdbcType.CHAR),
+            @Result(column = "remark", property = "remark", jdbcType = JdbcType.LONGVARCHAR)
+    })
+    List<UserFavorites> selectMany(SelectStatementProvider selectStatement);
 
     default Optional<UserFavorites> selectOne(SelectDSLCompleter completer) {
         return MyBatis3Utils.selectOne(this::selectOne, selectList, userFavorites, completer);
@@ -129,9 +108,36 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
         return MyBatis3Utils.update(this::update, userFavorites, completer);
     }
 
+    default int insert(UserFavorites row) {
+        return MyBatis3Utils.insert(this::insert, row, userFavorites, c ->
+                c.map(openid).toProperty("openid")
+                        .map(title).toProperty("title")
+                        .map(weekday).toProperty("weekday")
+                        .map(ksjc).toProperty("ksjc")
+                        .map(jsjc).toProperty("jsjc")
+                        .map(place).toProperty("place")
+                        .map(color).toProperty("color")
+                        .map(remark).toProperty("remark")
+        );
+    }
+
+    default int insertSelective(UserFavorites row) {
+        return MyBatis3Utils.insert(this::insert, row, userFavorites, c ->
+                c.map(openid).toPropertyWhenPresent("openid", row::getOpenid)
+                        .map(title).toPropertyWhenPresent("title", row::getTitle)
+                        .map(weekday).toPropertyWhenPresent("weekday", row::getWeekday)
+                        .map(ksjc).toPropertyWhenPresent("ksjc", row::getKsjc)
+                        .map(jsjc).toPropertyWhenPresent("jsjc", row::getJsjc)
+                        .map(place).toPropertyWhenPresent("place", row::getPlace)
+                        .map(color).toPropertyWhenPresent("color", row::getColor)
+                        .map(remark).toPropertyWhenPresent("remark", row::getRemark)
+        );
+    }
+
     default int updateByPrimaryKey(UserFavorites row) {
         return update(c ->
                 c.set(openid).equalTo(row::getOpenid)
+                        .set(title).equalTo(row::getTitle)
                         .set(weekday).equalTo(row::getWeekday)
                         .set(ksjc).equalTo(row::getKsjc)
                         .set(jsjc).equalTo(row::getJsjc)
@@ -145,6 +151,7 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
     default int updateByPrimaryKeySelective(UserFavorites row) {
         return update(c ->
                 c.set(openid).equalToWhenPresent(row::getOpenid)
+                        .set(title).equalToWhenPresent(row::getTitle)
                         .set(weekday).equalToWhenPresent(row::getWeekday)
                         .set(ksjc).equalToWhenPresent(row::getKsjc)
                         .set(jsjc).equalToWhenPresent(row::getJsjc)

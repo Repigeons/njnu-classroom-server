@@ -167,6 +167,16 @@ create index timetable_jasdm_index on timetable (JASDM);
 create index timetable_jxl_index on timetable (JXLMC);
 create index timetable_weekday_index on timetable (weekday);
 
+create table users
+(
+    openid           varchar(32) not null comment '用户id' primary key,
+    first_login_time datetime    not null comment '首次登录时间',
+    last_login_time  datetime    not null comment '最新登录时间'
+)
+    comment '用户信息'
+    engine = InnoDB
+    collate utf8mb4_general_ci;
+
 create table user_favorites
 (
     id      bigint auto_increment primary key,

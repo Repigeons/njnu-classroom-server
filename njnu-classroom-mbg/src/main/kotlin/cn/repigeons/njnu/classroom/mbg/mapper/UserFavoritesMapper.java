@@ -32,46 +32,6 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
     @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "row.id", before = false, resultType = Long.class)
     int insert(InsertStatementProvider<UserFavorites> insertStatement);
 
-    static UpdateDSL<UpdateModel> updateAllColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(openid).equalTo(row::getOpenid)
-                .set(title).equalTo(row::getTitle)
-                .set(weekday).equalTo(row::getWeekday)
-                .set(ksjc).equalTo(row::getKsjc)
-                .set(jsjc).equalTo(row::getJsjc)
-                .set(place).equalTo(row::getPlace)
-                .set(color).equalTo(row::getColor)
-                .set(remark).equalTo(row::getRemark);
-    }
-
-    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
-    @ResultMap("UserFavoritesResult")
-    Optional<UserFavorites> selectOne(SelectStatementProvider selectStatement);
-
-    default long count(CountDSLCompleter completer) {
-        return MyBatis3Utils.countFrom(this::count, userFavorites, completer);
-    }
-
-    default int delete(DeleteDSLCompleter completer) {
-        return MyBatis3Utils.deleteFrom(this::delete, userFavorites, completer);
-    }
-
-    default int deleteByPrimaryKey(Long id_) {
-        return delete(c ->
-                c.where(id, isEqualTo(id_))
-        );
-    }
-
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(openid).equalToWhenPresent(row::getOpenid)
-                .set(title).equalToWhenPresent(row::getTitle)
-                .set(weekday).equalToWhenPresent(row::getWeekday)
-                .set(ksjc).equalToWhenPresent(row::getKsjc)
-                .set(jsjc).equalToWhenPresent(row::getJsjc)
-                .set(place).equalToWhenPresent(row::getPlace)
-                .set(color).equalToWhenPresent(row::getColor)
-                .set(remark).equalToWhenPresent(row::getRemark);
-    }
-
     @SelectProvider(type = SqlProviderAdapter.class, method = "select")
     @Results(id = "UserFavoritesResult", value = {
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
@@ -86,26 +46,34 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
     })
     List<UserFavorites> selectMany(SelectStatementProvider selectStatement);
 
-    default Optional<UserFavorites> selectOne(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectOne(this::selectOne, selectList, userFavorites, completer);
+    static UpdateDSL<UpdateModel> updateAllColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(openid).equalTo(row::getOpenid)
+                .set(title).equalTo(row::getTitle)
+                .set(weekday).equalTo(row::getWeekday)
+                .set(ksjc).equalTo(row::getKsjc)
+                .set(jsjc).equalTo(row::getJsjc)
+                .set(place).equalTo(row::getPlace)
+                .set(color).equalTo(row::getColor)
+                .set(remark).equalTo(row::getRemark);
     }
 
-    default List<UserFavorites> select(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectList(this::selectMany, selectList, userFavorites, completer);
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(UserFavorites row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(openid).equalToWhenPresent(row::getOpenid)
+                .set(title).equalToWhenPresent(row::getTitle)
+                .set(weekday).equalToWhenPresent(row::getWeekday)
+                .set(ksjc).equalToWhenPresent(row::getKsjc)
+                .set(jsjc).equalToWhenPresent(row::getJsjc)
+                .set(place).equalToWhenPresent(row::getPlace)
+                .set(color).equalToWhenPresent(row::getColor)
+                .set(remark).equalToWhenPresent(row::getRemark);
     }
 
-    default List<UserFavorites> selectDistinct(SelectDSLCompleter completer) {
-        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, userFavorites, completer);
-    }
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @ResultMap("UserFavoritesResult")
+    Optional<UserFavorites> selectOne(SelectStatementProvider selectStatement);
 
-    default Optional<UserFavorites> selectByPrimaryKey(Long id_) {
-        return selectOne(c ->
-                c.where(id, isEqualTo(id_))
-        );
-    }
-
-    default int update(UpdateDSLCompleter completer) {
-        return MyBatis3Utils.update(this::update, userFavorites, completer);
+    default long count(CountDSLCompleter completer) {
+        return MyBatis3Utils.countFrom(this::count, userFavorites, completer);
     }
 
     default int insert(UserFavorites row) {
@@ -132,6 +100,38 @@ public interface UserFavoritesMapper extends CommonCountMapper, CommonDeleteMapp
                         .map(color).toPropertyWhenPresent("color", row::getColor)
                         .map(remark).toPropertyWhenPresent("remark", row::getRemark)
         );
+    }
+
+    default int delete(DeleteDSLCompleter completer) {
+        return MyBatis3Utils.deleteFrom(this::delete, userFavorites, completer);
+    }
+
+    default int deleteByPrimaryKey(Long id_) {
+        return delete(c ->
+                c.where(id, isEqualTo(id_))
+        );
+    }
+
+    default Optional<UserFavorites> selectOne(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectOne(this::selectOne, selectList, userFavorites, completer);
+    }
+
+    default List<UserFavorites> select(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectList(this::selectMany, selectList, userFavorites, completer);
+    }
+
+    default List<UserFavorites> selectDistinct(SelectDSLCompleter completer) {
+        return MyBatis3Utils.selectDistinct(this::selectMany, selectList, userFavorites, completer);
+    }
+
+    default Optional<UserFavorites> selectByPrimaryKey(Long id_) {
+        return selectOne(c ->
+                c.where(id, isEqualTo(id_))
+        );
+    }
+
+    default int update(UpdateDSLCompleter completer) {
+        return MyBatis3Utils.update(this::update, userFavorites, completer);
     }
 
     default int updateByPrimaryKey(UserFavorites row) {

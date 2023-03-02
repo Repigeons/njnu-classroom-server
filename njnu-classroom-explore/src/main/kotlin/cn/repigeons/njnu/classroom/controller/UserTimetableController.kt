@@ -40,7 +40,8 @@ class UserFavoritesController(
                 jcKs = record.ksjc,
                 jcJs = record.jsjc,
                 place = record.place,
-                remark = GsonUtils.fromJson(record.remark)
+                color = record.color,
+                remark = GsonUtils.fromJson(record.remark),
             )
         }
         return CommonResponse.success(data)
@@ -63,6 +64,7 @@ class UserFavoritesController(
             this.ksjc = payload.jcKs
             this.jsjc = payload.jcJs
             this.place = payload.place
+            this.color = payload.color
             this.remark = GsonUtils.toJson(payload.remark)
         }
         if (record.id == null)

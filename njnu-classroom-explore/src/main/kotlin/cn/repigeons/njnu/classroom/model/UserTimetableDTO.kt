@@ -24,6 +24,10 @@ data class UserFavoritesDTO(
      */
     val place: String,
     /**
+     * 颜色
+     */
+    val color: String,
+    /**
      * 备注
      */
     val remark: Map<String, *>

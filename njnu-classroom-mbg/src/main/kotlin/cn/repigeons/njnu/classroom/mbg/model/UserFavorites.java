@@ -3,7 +3,7 @@ package cn.repigeons.njnu.classroom.mbg.model;
 /**
  * 用户定制时间表
  */
-public class UserTimetable {
+public class UserFavorites {
     /**
      * @mbg.generated
      */
@@ -33,6 +33,11 @@ public class UserTimetable {
      * 地点
      */
     private String place;
+
+    /**
+     * 颜色(#RGB)
+     */
+    private String color;
 
     /**
      * 备注
@@ -85,6 +90,14 @@ public class UserTimetable {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getRemark() {

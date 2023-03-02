@@ -2,7 +2,7 @@ package cn.repigeons.njnu.classroom.model
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 
-data class UserTimetableDTO(
+data class UserFavoritesDTO(
     /**
      * 记录id
      */

@@ -53,7 +53,7 @@
         <table tableName="grids">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
-        <table tableName="user_timetable">
+        <table tableName="user_favorites">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
     </context>

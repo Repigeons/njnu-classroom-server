@@ -7,8 +7,8 @@ import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.commons.model.RequestPayload
 import cn.repigeons.njnu.classroom.commons.util.JwtUtil
 import cn.repigeons.njnu.classroom.mbg.mapper.*
-import cn.repigeons.njnu.classroom.mbg.model.UserTimetable
-import cn.repigeons.njnu.classroom.model.UserTimetableDTO
+import cn.repigeons.njnu.classroom.mbg.model.UserFavorites
+import cn.repigeons.njnu.classroom.model.UserFavoritesDTO
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrElse
@@ -18,8 +18,8 @@ import kotlin.jvm.optionals.getOrElse
  */
 @RestController
 @RequestMapping("user")
-class UserTimetableController(
-    private val userTimetableMapper: UserTimetableMapper
+class UserFavoritesController(
+    private val userTimetableMapper: UserFavoritesMapper
 ) {
     /**
      * 查询用户时间表
@@ -31,10 +31,10 @@ class UserTimetableController(
         val openid = token2openid(token)
             ?: return CommonResponse.unauthorized()
         val records = userTimetableMapper.select {
-            it.where(UserTimetableDynamicSqlSupport.openid, isEqualTo(openid))
+            it.where(UserFavoritesDynamicSqlSupport.openid, isEqualTo(openid))
         }
         val data = records.map { record ->
-            UserTimetableDTO(
+            UserFavoritesDTO(
                 id = record.id,
                 weekday = Weekday.valueOf(record.weekday),
                 jcKs = record.ksjc,
@@ -52,11 +52,11 @@ class UserTimetableController(
     @PostMapping("timetable")
     fun saveTimetable(
         @RequestHeader("Authorization") token: String,
-        @RequestBody payload: UserTimetableDTO
+        @RequestBody payload: UserFavoritesDTO
     ): CommonResponse<*> {
         val openid = token2openid(token)
             ?: return CommonResponse.unauthorized()
-        val record = UserTimetable().apply {
+        val record = UserFavorites().apply {
             this.id = payload.id
             this.openid = openid
             this.weekday = payload.weekday.name

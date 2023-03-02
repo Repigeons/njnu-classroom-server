@@ -14,23 +14,23 @@ import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrElse
 
 /**
- * 用户时间表
+ * 用户收藏
  */
 @RestController
 @RequestMapping("user")
 class UserFavoritesController(
-    private val userTimetableMapper: UserFavoritesMapper
+    private val userFavoritesMapper: UserFavoritesMapper
 ) {
     /**
-     * 查询用户时间表
+     * 查询用户收藏
      */
-    @GetMapping("timetable")
-    fun getTimeTable(
+    @GetMapping("favorites")
+    fun getFavorites(
         @RequestHeader("Authorization") token: String
     ): CommonResponse<*> {
         val openid = token2openid(token)
             ?: return CommonResponse.unauthorized()
-        val records = userTimetableMapper.select {
+        val records = userFavoritesMapper.select {
             it.where(UserFavoritesDynamicSqlSupport.openid, isEqualTo(openid))
         }
         val data = records.map { record ->
@@ -48,10 +48,10 @@ class UserFavoritesController(
     }
 
     /**
-     * 新增/修改用户时间表
+     * 新增/修改用户收藏
      */
-    @PostMapping("timetable")
-    fun saveTimetable(
+    @PostMapping("favorites")
+    fun saveFavorites(
         @RequestHeader("Authorization") token: String,
         @RequestBody payload: UserFavoritesDTO
     ): CommonResponse<*> {
@@ -68,9 +68,9 @@ class UserFavoritesController(
             this.remark = GsonUtils.toJson(payload.remark)
         }
         if (record.id == null)
-            userTimetableMapper.insert(record)
+            userFavoritesMapper.insert(record)
         else
-            userTimetableMapper.updateByPrimaryKey(record)
+            userFavoritesMapper.updateByPrimaryKey(record)
         return CommonResponse.success(
             mapOf(
                 "id" to record.id
@@ -79,21 +79,21 @@ class UserFavoritesController(
     }
 
     /**
-     * 删除用户时间表
+     * 删除用户收藏
      */
-    @DeleteMapping("timetable")
-    fun deleteTimetable(
+    @DeleteMapping("favorites")
+    fun deleteFavorites(
         @RequestHeader("Authorization") token: String,
         @RequestBody payload: RequestPayload<Long>
     ): CommonResponse<*> {
         val openid = token2openid(token)
             ?: return CommonResponse.unauthorized()
         val id = requireNotNull(payload["id"]) { "请求参数缺失：id" }
-        val record = userTimetableMapper.selectByPrimaryKey(id)
+        val record = userFavoritesMapper.selectByPrimaryKey(id)
             .getOrElse { return CommonResponse.failed("记录不存在") }
         if (record.openid != openid)
             return CommonResponse.forbidden()
-        userTimetableMapper.deleteByPrimaryKey(id)
+        userFavoritesMapper.deleteByPrimaryKey(id)
         return CommonResponse.success()
     }
 

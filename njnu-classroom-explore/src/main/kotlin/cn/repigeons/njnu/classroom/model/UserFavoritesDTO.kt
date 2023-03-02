@@ -6,7 +6,7 @@ data class UserFavoritesDTO(
     /**
      * 记录id
      */
-    val id: Long,
+    val id: Long?,
     /**
      * 标题
      */

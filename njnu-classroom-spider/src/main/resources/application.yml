@@ -4,6 +4,10 @@ server:
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 10s
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:

@@ -13,6 +13,9 @@ services:
   explore_dev:
     image: njnu-classroom.io/njnu-classroom-explore:develop
     build: /opt/njnu-classroom-server.git/njnu-classroom-explore
+  gateway_dev:
+    image: njnu-classroom.io/njnu-classroom-gateway:develop
+    build: /opt/njnu-classroom-server.git/njnu-classroom-gateway
 
   spider_prd:
     image: njnu-classroom.io/njnu-classroom-spider:production
@@ -26,7 +29,6 @@ services:
   explore_prd:
     image: njnu-classroom.io/njnu-classroom-explore:production
     build: /opt/njnu-classroom-server.git/njnu-classroom-explore
-
-  nginx:
-    image: njnu-classroom.io/njnu-classroom-nginx:latest
-    build: /opt/njnu-classroom-server.git/njnu-classroom-nginx
+  gateway_prd:
+    image: njnu-classroom.io/njnu-classroom-gateway:production
+    build: /opt/njnu-classroom-server.git/njnu-classroom-gateway

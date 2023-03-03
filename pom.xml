@@ -15,6 +15,7 @@
         <module>njnu-classroom-portal</module>
         <module>njnu-classroom-core</module>
         <module>njnu-classroom-explore</module>
+        <module>njnu-classroom-gateway</module>
     </modules>
 
     <properties>

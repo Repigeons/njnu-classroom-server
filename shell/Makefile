@@ -19,6 +19,7 @@ else ifeq (${service}, spider)
 else ifeq (${service}, portal)
 else ifeq (${service}, core)
 else ifeq (${service}, explore)
+else ifeq (${service}, gateway)
 else
 $(error "Unresolved property: service, which should be in [spider, portal, core, explore].")
 endif

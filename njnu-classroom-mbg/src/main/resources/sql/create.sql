@@ -181,7 +181,7 @@ create table user_favorites
 (
     id      bigint auto_increment primary key,
     openid  varchar(32)                                            not null comment '用户id',
-    title   varchar(16)                                            not null comment '标题',
+    title   varchar(64)                                            not null comment '标题',
     weekday enum ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat') not null comment '星期',
     ksjc    smallint(2)                                            not null comment '开始节次',
     jsjc    smallint(2)                                            not null comment '结束节次',

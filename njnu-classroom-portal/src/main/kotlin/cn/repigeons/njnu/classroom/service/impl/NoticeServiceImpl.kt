@@ -1,6 +1,7 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.njnu.classroom.mbg.mapper.*
+import cn.repigeons.njnu.classroom.mbg.mapper.NoticeDynamicSqlSupport
+import cn.repigeons.njnu.classroom.mbg.mapper.NoticeMapper
 import cn.repigeons.njnu.classroom.mbg.model.Notice
 import cn.repigeons.njnu.classroom.model.NoticeVO
 import cn.repigeons.njnu.classroom.service.NoticeService
@@ -16,7 +17,7 @@ open class NoticeServiceImpl(
 ) : NoticeService {
     private val df = SimpleDateFormat("yyyy-MM-dd")
 
-    @CachePut("notice")
+    @CachePut("notice", key = "")
     override fun putNotice(text: String): NoticeVO {
         val notice = Notice()
         notice.time = Date()
@@ -25,7 +26,7 @@ open class NoticeServiceImpl(
         return record2data(notice)
     }
 
-    @Cacheable("notice")
+    @Cacheable("notice", key = "")
     override fun getNotice(): NoticeVO? {
         val record = noticeMapper.selectOne {
             it.orderBy(NoticeDynamicSqlSupport.time.descending())
@@ -36,7 +37,7 @@ open class NoticeServiceImpl(
         return null
     }
 
-    @CachePut("notice")
+    @CachePut("notice", key = "")
     override fun setNotice(id: Int): NoticeVO? {
         val record = noticeMapper.selectByPrimaryKey(id)
         if (record.isPresent) {

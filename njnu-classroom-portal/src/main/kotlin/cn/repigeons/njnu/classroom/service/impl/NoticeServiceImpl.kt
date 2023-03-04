@@ -17,16 +17,7 @@ open class NoticeServiceImpl(
 ) : NoticeService {
     private val df = SimpleDateFormat("yyyy-MM-dd")
 
-    @CachePut("notice", key = "''")
-    override fun putNotice(text: String): NoticeVO {
-        val notice = Notice()
-        notice.time = Date()
-        notice.text = text
-        noticeMapper.insert(notice)
-        return record2data(notice)
-    }
-
-    @Cacheable("notice", key = "''")
+    @Cacheable("notice")
     override fun getNotice(): NoticeVO? {
         val record = noticeMapper.selectOne {
             it.orderBy(NoticeDynamicSqlSupport.time.descending())
@@ -37,7 +28,16 @@ open class NoticeServiceImpl(
         return null
     }
 
-    @CachePut("notice", key = "''")
+    @CachePut("notice", key = "'SimpleKey []'")
+    override fun putNotice(text: String): NoticeVO {
+        val notice = Notice()
+        notice.time = Date()
+        notice.text = text
+        noticeMapper.insert(notice)
+        return record2data(notice)
+    }
+
+    @CachePut("notice", key = "'SimpleKey []'")
     override fun setNotice(id: Int): NoticeVO? {
         val record = noticeMapper.selectByPrimaryKey(id)
         if (record.isPresent) {

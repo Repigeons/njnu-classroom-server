@@ -43,8 +43,7 @@ open class ShuttleServiceImpl(
 
     @Cacheable("shuttle-route", key = "#weekday + '::' + #route")
     override fun getRoute(weekday: Weekday, route: Short): List<ShuttleRoute> {
-        val day = if (weekday.ordinal > 0) weekday.ordinal else 7
-        val shuttleRoute = shuttleDAO.selectRoute(day, route)
+        val shuttleRoute = shuttleDAO.selectRoute(weekday.ordinal + 1, route)
         return shuttleRoute.map {
             val item = ShuttleRoute(
                 startTime = it.startTime,

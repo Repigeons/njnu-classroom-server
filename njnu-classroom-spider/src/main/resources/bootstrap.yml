@@ -4,8 +4,6 @@ spring:
   cloud:
     nacos:
       server-addr: 10.144.0.252:8848
-      username: njnu-classroom
-      password: njnu-000
       config:
         namespace: njnu-classroom
         group: ${spring.profiles.active}

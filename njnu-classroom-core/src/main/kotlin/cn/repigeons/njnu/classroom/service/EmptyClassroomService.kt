@@ -5,7 +5,7 @@ import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
 import java.util.concurrent.Future
 
 interface EmptyClassroomService {
-    fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO>
+    suspend fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO>
     fun feedback(
         jxlmc: String,
         weekday: Weekday,

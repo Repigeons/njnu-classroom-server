@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.service.NoticeService
 import org.springframework.web.bind.annotation.*
 
@@ -8,26 +8,25 @@ import org.springframework.web.bind.annotation.*
 class NoticeController(
     private val noticeService: NoticeService
 ) {
-
     @PutMapping("notice")
     fun putNotice(
         @RequestParam text: String
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         val data = noticeService.putNotice(text.replace("\\n", "\n"))
-        return CommonResponse.success(data)
+        return CommonResult.success(data)
     }
 
     @GetMapping("notice")
-    fun getNotice(): CommonResponse<*> {
+    fun getNotice(): CommonResult<*> {
         val data = noticeService.getNotice()
-        return CommonResponse.success(data)
+        return CommonResult.success(data)
     }
 
     @PostMapping("notice")
     fun setNotice(
         @RequestParam id: Int
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         val data = noticeService.setNotice(id)
-        return CommonResponse.success(data)
+        return CommonResult.success(data)
     }
 }

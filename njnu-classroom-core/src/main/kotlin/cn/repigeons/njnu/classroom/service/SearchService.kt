@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.service
 
-import cn.repigeons.commons.api.CommonPageable
+import cn.repigeons.njnu.classroom.commons.api.CommonPage
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.model.TimetableVO
 
@@ -14,5 +14,5 @@ interface SearchService {
         keyword: String?,
         page: Int,
         size: Int
-    ): CommonPageable<TimetableVO>
+    ): CommonPage<TimetableVO>
 }

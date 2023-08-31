@@ -7,7 +7,7 @@
     <property name="TOTAL_SIZE" value="2GB"/>
     <property name="CHARSET" value="UTF-8"/>
     <property name="PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [CHANNEL:%X{channel}] [%thread] [TID:%X{traceId}] %-5level %logger -%msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger -%msg%n"/>
 
     <!--控制台输出-->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -102,8 +102,6 @@
         <appender-ref ref="ERROR"/>
         <appender-ref ref="WARN"/>
         <appender-ref ref="INFO"/>
-        <springProfile name="local, dev, test">
-            <appender-ref ref="DEBUG"/>
-        </springProfile>
+        <appender-ref ref="DEBUG"/>
     </root>
 </configuration>

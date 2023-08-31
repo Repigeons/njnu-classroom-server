@@ -1,13 +1,16 @@
 package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.commons.util.EmailUtil
+import cn.repigeons.njnu.classroom.commons.utils.EmailUtils
 import cn.repigeons.njnu.classroom.mbg.dao.ShuttleDAO
 import cn.repigeons.njnu.classroom.mbg.mapper.PositionsDynamicSqlSupport
 import cn.repigeons.njnu.classroom.mbg.mapper.PositionsMapper
 import cn.repigeons.njnu.classroom.model.PositionVO
 import cn.repigeons.njnu.classroom.model.ShuttleRoute
 import cn.repigeons.njnu.classroom.service.ShuttleService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.withContext
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
@@ -16,11 +19,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 @Service
 @RefreshScope
-open class ShuttleServiceImpl(
+class ShuttleServiceImpl(
     private val shuttleDAO: ShuttleDAO,
     private val positionsMapper: PositionsMapper,
 ) : ShuttleService {
@@ -54,21 +56,22 @@ open class ShuttleServiceImpl(
         }.flatten()
     }
 
-    override fun sendShuttleImage(file: MultipartFile): CompletableFuture<*> =
-        CompletableFuture.supplyAsync {
-            val filename = file.originalFilename
-            logger.info("upload shuttle image: {}", filename)
-            val extension = filename?.split('.')?.lastOrNull()
-            val attachment = File.createTempFile("shuttle_", extension).apply {
+    override suspend fun sendShuttleImage(file: MultipartFile) {
+        val filename = file.originalFilename
+        logger.info("upload shuttle image: {}", filename)
+        val extension = filename?.split('.')?.lastOrNull()
+        val attachment = withContext(Dispatchers.IO) {
+            File.createTempFile("shuttle_", extension).apply {
                 deleteOnExit()
                 file.transferTo(this)
             }
-            logger.info("send shuttle image file: {}", attachment.name)
-            EmailUtil.sendFile(
-                nickname = "南师教室",
-                subject = "【南师教室】有人上传校车时刻表.${extension}",
-                content = "${filename}\n${attachment.name}",
-                attachments = arrayOf(attachment),
-            )
         }
+        logger.info("send shuttle image file: {}", attachment.name)
+        EmailUtils.sendFile(
+            nickname = "南师教室",
+            subject = "【南师教室】有人上传校车时刻表.${extension}",
+            content = "${filename}\n${attachment.name}",
+            attachments = arrayOf(attachment),
+        ).awaitSingle()
+    }
 }

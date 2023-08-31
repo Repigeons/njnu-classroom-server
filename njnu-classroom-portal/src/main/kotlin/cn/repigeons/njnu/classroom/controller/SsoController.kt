@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
-import cn.repigeons.njnu.classroom.commons.util.JwtUtil
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
+import cn.repigeons.njnu.classroom.commons.utils.JwtUtils
 import cn.repigeons.njnu.classroom.service.SsoService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,16 +14,14 @@ class SsoController(
     private val ssoService: SsoService,
 ) {
     @GetMapping("login")
-    fun login(
+    suspend fun login(
         @RequestParam jsCode: String
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         val openid = ssoService.getOpenidByJsCode(jsCode)
         ssoService.updateLoginRecordByOpenid(openid)
-        val token = JwtUtil.generate(openid)
-        return CommonResponse.success(
-            mapOf(
-                "token" to token
-            )
+        val token = JwtUtils.generate(openid)
+        return CommonResult.success(
+            mapOf("token" to token)
         )
     }
 }

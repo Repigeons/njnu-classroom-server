@@ -1,9 +1,9 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.commons.redisService.RedisService
-import cn.repigeons.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.commons.util.EmailUtil
+import cn.repigeons.njnu.classroom.commons.service.RedisService
+import cn.repigeons.njnu.classroom.commons.utils.EmailUtils
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.mbg.dao.FeedbackDAO
 import cn.repigeons.njnu.classroom.mbg.mapper.CorrectionMapper
 import cn.repigeons.njnu.classroom.mbg.mapper.FeedbackMapper
@@ -15,7 +15,11 @@ import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
 import cn.repigeons.njnu.classroom.rpc.client.SpiderClient
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.future
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
+import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -30,11 +34,11 @@ class EmptyClassroomServiceImpl(
     private val feedbackDAO: FeedbackDAO,
     private val correctionMapper: CorrectionMapper,
 ) : EmptyClassroomService {
-    override fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO> {
+    override suspend fun getEmptyClassrooms(jxlmc: String, weekday: Weekday, jc: Short): List<EmptyClassroomVO> {
         if (jc !in 1..12) return emptyList()
         val jxlmcList = cacheService.getBuildingPositions().map { it.name }
         if (jxlmc !in jxlmcList) return emptyList()
-        val classrooms = redisService.hGet("core::empty", "$jxlmc:${weekday.name}") as List<*>?
+        val classrooms = redisService.opsForHash().getAndAwait("core::empty", "$jxlmc:${weekday.name}") as List<*>?
             ?: return emptyList()
         return classrooms.mapNotNull { classroom ->
             classroom as EmptyClassroomVO
@@ -45,13 +49,14 @@ class EmptyClassroomServiceImpl(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun feedback(
         jxlmc: String,
         weekday: Weekday,
         jc: Short,
         results: List<EmptyClassroomVO>,
         index: Int
-    ): CompletableFuture<*> = CompletableFuture.supplyAsync {
+    ): CompletableFuture<Unit> = GlobalScope.future {
         val item = results[index]
 
         // 检查缓存一致性
@@ -64,7 +69,7 @@ class EmptyClassroomServiceImpl(
         }
         if (count == 0L) {
             cacheService.flushCache()
-            return@supplyAsync
+            return@future
         }
 
         val obj = mapOf(
@@ -85,12 +90,12 @@ class EmptyClassroomServiceImpl(
             val content = "验证一站式平台：数据不一致\n" +
                     "操作方案：更新数据库\n" +
                     "反馈数据详情：$detail"
-            EmailUtil.send(
+            EmailUtils.sendAndAwait(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
             )
-            return@supplyAsync
+            return@future
         }
 
         // 记录反馈内容
@@ -98,12 +103,12 @@ class EmptyClassroomServiceImpl(
             val content = "验证一站式平台：数据一致（非空教室）\n" +
                     "操作方案：${null}\n" +
                     "反馈数据详情：$detail"
-            EmailUtil.send(
+            EmailUtils.sendAndAwait(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
             )
-            return@supplyAsync
+            return@future
         } else {
             val map = autoCorrect(
                 jxlmc = jxlmc,
@@ -119,12 +124,12 @@ class EmptyClassroomServiceImpl(
                     "本周计数：${weekCount}\n" +
                     "操作方案：${if (weekCount == totalCount) null else "自动纠错"}\n" +
                     "反馈数据详情：$detail"
-            EmailUtil.send(
+            EmailUtils.sendAndAwait(
                 nickname = "南师教室",
                 subject = subject,
                 content = content,
             )
-            return@supplyAsync
+            return@future
         }
     }
 

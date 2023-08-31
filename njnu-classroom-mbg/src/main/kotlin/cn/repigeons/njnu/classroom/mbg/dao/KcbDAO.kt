@@ -5,6 +5,6 @@ import org.apache.ibatis.annotations.Update
 
 @Mapper
 interface KcbDAO {
-    @Update("TRUNCATE TABLE `KCB`")
+    @Update("TRUNCATE TABLE `kcb`")
     fun truncate()
 }

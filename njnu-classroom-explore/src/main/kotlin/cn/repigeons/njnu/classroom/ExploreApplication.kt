@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableCaching
 @EnableScheduling
 @SpringBootApplication
-open class ExploreApplication
+class ExploreApplication
 
 fun main(args: Array<String>) {
     runApplication<ExploreApplication>(*args)

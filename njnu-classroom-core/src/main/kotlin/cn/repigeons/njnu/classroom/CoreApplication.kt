@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableScheduling
 @EnableFeignClients
 @SpringBootApplication
-open class CoreApplication
+class CoreApplication
 
 fun main(args: Array<String>) {
     runApplication<CoreApplication>(*args)

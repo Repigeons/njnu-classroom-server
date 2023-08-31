@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.component.ServiceSwitch
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -18,8 +18,8 @@ class ServiceSwitchController(
      * 获取服务开关
      */
     @GetMapping("serviceSwitch")
-    fun getServiceSwitch(): CommonResponse<Boolean> {
-        return CommonResponse.success(serviceSwitch.value)
+    fun getServiceSwitch(): CommonResult<Boolean> {
+        return CommonResult.success(serviceSwitch.value)
     }
 
     /**
@@ -28,8 +28,8 @@ class ServiceSwitchController(
     @PutMapping("serviceSwitch")
     fun setServiceSwitch(
         @RequestParam value: Boolean
-    ): CommonResponse<Boolean> {
+    ): CommonResult<Boolean> {
         serviceSwitch.value = value
-        return CommonResponse.success(serviceSwitch.value)
+        return CommonResult.success(serviceSwitch.value)
     }
 }

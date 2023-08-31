@@ -1,8 +1,9 @@
 package cn.repigeons.njnu.classroom.mbg.mapper;
 
-import java.sql.JDBCType;
 import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
+
+import java.sql.JDBCType;
 
 public final class JasDynamicSqlSupport {
     public static final Jas jas = new Jas();
@@ -168,72 +169,72 @@ public final class JasDynamicSqlSupport {
     public static final SqlColumn<String> bz = jas.bz;
 
     public static final class Jas extends AliasableSqlTable<Jas> {
-        public final SqlColumn<String> jasdm = column("JASDM", JDBCType.CHAR);
+        public final SqlColumn<String> jasdm = column("jasdm", JDBCType.CHAR);
 
-        public final SqlColumn<String> jasmc = column("JASMC", JDBCType.VARCHAR);
+        public final SqlColumn<String> jasmc = column("jasmc", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> jxldm = column("JXLDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> jxldm = column("jxldm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> jxldmDisplay = column("JXLDM_DISPLAY", JDBCType.VARCHAR);
+        public final SqlColumn<String> jxldmDisplay = column("jxldm_display", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> xxxqdm = column("XXXQDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> xxxqdm = column("xxxqdm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> xxxqdmDisplay = column("XXXQDM_DISPLAY", JDBCType.VARCHAR);
+        public final SqlColumn<String> xxxqdmDisplay = column("xxxqdm_display", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> jaslxdm = column("JASLXDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> jaslxdm = column("jaslxdm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> jaslxdmDisplay = column("JASLXDM_DISPLAY", JDBCType.VARCHAR);
+        public final SqlColumn<String> jaslxdmDisplay = column("jaslxdm_display", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> zt = column("ZT", JDBCType.VARCHAR);
+        public final SqlColumn<String> zt = column("zt", JDBCType.VARCHAR);
 
-        public final SqlColumn<Short> lc = column("LC", JDBCType.SMALLINT);
+        public final SqlColumn<Short> lc = column("lc", JDBCType.SMALLINT);
 
-        public final SqlColumn<Integer> skzws = column("SKZWS", JDBCType.INTEGER);
+        public final SqlColumn<Integer> skzws = column("skzws", JDBCType.INTEGER);
 
-        public final SqlColumn<Integer> kszws = column("KSZWS", JDBCType.INTEGER);
+        public final SqlColumn<Integer> kszws = column("kszws", JDBCType.INTEGER);
 
-        public final SqlColumn<String> xnxqdm = column("XNXQDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> xnxqdm = column("xnxqdm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> xnxqdm2 = column("XNXQDM2", JDBCType.VARCHAR);
+        public final SqlColumn<String> xnxqdm2 = column("xnxqdm2", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> dwdm = column("DWDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> dwdm = column("dwdm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> dwdmDisplay = column("DWDM_DISPLAY", JDBCType.VARCHAR);
+        public final SqlColumn<String> dwdmDisplay = column("dwdm_display", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> zwsxdm = column("ZWSXDM", JDBCType.VARCHAR);
+        public final SqlColumn<String> zwsxdm = column("zwsxdm", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> syrq = column("SYRQ", JDBCType.VARCHAR);
+        public final SqlColumn<String> syrq = column("syrq", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> sysj = column("SYSJ", JDBCType.VARCHAR);
+        public final SqlColumn<String> sysj = column("sysj", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> sxlb = column("SXLB", JDBCType.VARCHAR);
+        public final SqlColumn<String> sxlb = column("sxlb", JDBCType.VARCHAR);
 
-        public final SqlColumn<Boolean> sfypk = column("SFYPK", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfypk = column("sfypk", JDBCType.BIT);
 
-        public final SqlColumn<Boolean> sfyxpk = column("SFYXPK", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxpk = column("sfyxpk", JDBCType.BIT);
 
-        public final SqlColumn<String> pkyxj = column("PKYXJ", JDBCType.VARCHAR);
+        public final SqlColumn<String> pkyxj = column("pkyxj", JDBCType.VARCHAR);
 
-        public final SqlColumn<Boolean> sfkswh = column("SFKSWH", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfkswh = column("sfkswh", JDBCType.BIT);
 
-        public final SqlColumn<Boolean> sfyxks = column("SFYXKS", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxks = column("sfyxks", JDBCType.BIT);
 
-        public final SqlColumn<String> ksyxj = column("KSYXJ", JDBCType.VARCHAR);
+        public final SqlColumn<String> ksyxj = column("ksyxj", JDBCType.VARCHAR);
 
-        public final SqlColumn<Boolean> sfyxcx = column("SFYXCX", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxcx = column("sfyxcx", JDBCType.BIT);
 
-        public final SqlColumn<Boolean> sfyxjy = column("SFYXJY", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxjy = column("sfyxjy", JDBCType.BIT);
 
-        public final SqlColumn<Boolean> sfyxzx = column("SFYXZX", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxzx = column("sfyxzx", JDBCType.BIT);
 
-        public final SqlColumn<String> jsyt = column("JSYT", JDBCType.LONGVARCHAR);
+        public final SqlColumn<String> jsyt = column("jsyt", JDBCType.LONGVARCHAR);
 
-        public final SqlColumn<String> xgdd = column("XGDD", JDBCType.LONGVARCHAR);
+        public final SqlColumn<String> xgdd = column("xgdd", JDBCType.LONGVARCHAR);
 
-        public final SqlColumn<String> bz = column("BZ", JDBCType.LONGVARCHAR);
+        public final SqlColumn<String> bz = column("bz", JDBCType.LONGVARCHAR);
 
         public Jas() {
-            super("JAS", Jas::new);
+            super("jas", Jas::new);
         }
     }
 }

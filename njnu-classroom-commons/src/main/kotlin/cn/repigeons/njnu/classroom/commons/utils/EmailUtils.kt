@@ -1,56 +1,35 @@
-package cn.repigeons.njnu.classroom.commons.util
+package cn.repigeons.njnu.classroom.commons.utils
 
-import cn.repigeons.commons.utils.SpringUtils
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.context.annotation.Configuration
 import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.mail.javamail.MimeMessageHelper
 import java.io.File
-import java.util.*
 
 @RefreshScope
 @Configuration
-private open class EmailConfig {
+private class EmailConfig(
+    val mailSender: JavaMailSender,
+) : InitializingBean {
+    @Value("\${spring.mail.username}")
+    var username: String = ""
+
     @Value("\${spring.mail.receivers:}")
     val receivers: Array<String> = arrayOf()
-
-    @Value("\${spring.mail.host:}")
-    private var host = ""
-
-    @Value("\${spring.mail.port:0}")
-    private var port = 0
-
-    @Value("\${spring.mail.username:}")
-    var username = ""
-        private set
-
-    @Value("\${spring.mail.password:}")
-    private var password = ""
-
-    @Value("\${spring.mail.default-encoding:UTF-8")
-    private var defaultEncoding = "UTF-8"
-
-    private val javaMailProperties = Properties().apply {
-        this["mail.smtp.ssl.enable"] = true
-    }
-
-    val javaMailSender: JavaMailSender = JavaMailSenderImpl().apply {
-        this.host = this@EmailConfig.host
-        this.port = this@EmailConfig.port
-        this.username = this@EmailConfig.username
-        this.password = this@EmailConfig.password
-        this.defaultEncoding = this@EmailConfig.defaultEncoding
-        this.javaMailProperties = this@EmailConfig.javaMailProperties
+    override fun afterPropertiesSet() {
+        emailConfig = this
     }
 }
 
-object EmailUtil {
+private lateinit var emailConfig: EmailConfig
+
+object EmailUtils {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val emailConfig: EmailConfig = SpringUtils.getBean()
-    private val mailSender = emailConfig.javaMailSender
 
     /**
      * 发送邮件
@@ -62,25 +41,22 @@ object EmailUtil {
         receivers: Array<String> = emailConfig.receivers,
         ccReceivers: Array<String>? = null,
         html: Boolean = false
-    ) {
+    ) = mono {
         logger.info("发送邮件：{},{},{},{}", subject, content, receivers, ccReceivers)
-        val mimeMessage = mailSender.createMimeMessage()
+        val mimeMessage = emailConfig.mailSender.createMimeMessage()
         val helper = MimeMessageHelper(mimeMessage, false)
         // 发件人
-        if (nickname == null)
-            helper.setFrom(emailConfig.username)
-        else
-            helper.setFrom(emailConfig.username, nickname)
+        if (nickname == null) helper.setFrom(emailConfig.username)
+        else helper.setFrom(emailConfig.username, nickname)
         // 收件人
         helper.setTo(receivers)
         // 抄送
-        if (!ccReceivers.isNullOrEmpty())
-            helper.setCc(ccReceivers)
+        if (!ccReceivers.isNullOrEmpty()) helper.setCc(ccReceivers)
         // 邮件主题
         helper.setSubject(subject)
         // 邮件内容
         helper.setText(content, html)
-        mailSender.send(mimeMessage)
+        emailConfig.mailSender.send(mimeMessage)
         logger.info("发送邮件成功")
     }
 
@@ -93,15 +69,13 @@ object EmailUtil {
         content: String,
         receivers: Array<String> = emailConfig.receivers,
         vararg attachments: File
-    ) {
+    ) = mono {
         logger.info("发送邮件：{},{},{},{}", subject, content, receivers, attachments)
-        val mimeMessage = mailSender.createMimeMessage()
+        val mimeMessage = emailConfig.mailSender.createMimeMessage()
         val helper = MimeMessageHelper(mimeMessage, true)
         // 发件人
-        if (nickname == null)
-            helper.setFrom(emailConfig.username)
-        else
-            helper.setFrom(emailConfig.username, nickname)
+        if (nickname == null) helper.setFrom(emailConfig.username)
+        else helper.setFrom(emailConfig.username, nickname)
         // 收件人
         helper.setTo(receivers)
         // 邮件主题
@@ -111,7 +85,24 @@ object EmailUtil {
         attachments.forEach { file ->
             helper.addAttachment(file.name, file)
         }
-        mailSender.send(mimeMessage)
+        emailConfig.mailSender.send(mimeMessage)
         logger.info("发送邮件成功")
     }
+
+    suspend fun sendAndAwait(
+        nickname: String? = null,
+        subject: String,
+        content: String,
+        receivers: Array<String> = emailConfig.receivers,
+        ccReceivers: Array<String>? = null,
+        html: Boolean = false
+    ) = send(nickname, subject, content, receivers, ccReceivers, html).awaitSingle()
+
+    suspend fun sendFileAndAwait(
+        nickname: String? = null,
+        subject: String,
+        content: String,
+        receivers: Array<String> = emailConfig.receivers,
+        vararg attachments: File
+    ) = sendFile(nickname, subject, content, receivers, *attachments).awaitSingle()
 }

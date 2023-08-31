@@ -1,50 +1,31 @@
 package cn.repigeons.njnu.classroom.commons.component
 
-import cn.repigeons.commons.api.CommonResponse
-import jakarta.servlet.http.HttpServletRequest
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import org.slf4j.LoggerFactory
-import org.springframework.http.converter.HttpMessageConversionException
-import org.springframework.http.converter.HttpMessageNotReadableException
-import org.springframework.web.HttpMediaTypeException
-import org.springframework.web.HttpRequestMethodNotSupportedException
-import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.server.ServerWebExchange
 
-/**
- * 全局异常处理
- */
 @ControllerAdvice
 class GlobalExceptionHandler {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @ResponseBody
     @ExceptionHandler(Exception::class)
-    fun handle(e: Exception, request: HttpServletRequest): CommonResponse<*> {
-        logger.error("全局异常：{} {}", request.method, request.requestURI)
-        request.parameterMap.forEach { (key: String, value: Array<String>) ->
+    fun handle(e: Exception, exchange: ServerWebExchange): CommonResult<Nothing> {
+        val request = exchange.request
+        logger.error("全局异常：{} {}", request.method, request.uri)
+        request.queryParams.forEach { (key: String, value: List<String>) ->
             logger.error("*****请求参数*****:{},{}", key, value)
         }
         logger.error("*********异常信息:{}", e.message, e)
-        return when {
-            e is HttpClientErrorException -> CommonResponse.failed(e.responseMessage)
-
-            e is HttpRequestMethodNotSupportedException -> CommonResponse.failed("请求方法错误[${request.method}]")
-
-            request.method in listOf("POST", "DELETE", "PUT", "PATCH") &&
-                    (e is HttpMediaTypeException || e is HttpMessageConversionException) -> {
-                val contentType = request.getHeader("Content-Type")
-                CommonResponse.failed("请求格式错误[${contentType}]")
-            }
-
-            e is MissingServletRequestParameterException ||
-                    e is HttpMessageNotReadableException ||
-                    e is IllegalArgumentException ->
-                CommonResponse.failed(e.responseMessage)
-
-            else -> CommonResponse.failed(e.responseMessage)
+        return when (e) {
+            is HttpClientErrorException -> CommonResult.failed(e.responseMessage)
+            is ResponseStatusException -> CommonResult.failed(e.reason ?: e.responseMessage)
+            else -> CommonResult.failed(e.responseMessage)
         }
     }
 

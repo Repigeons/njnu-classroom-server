@@ -1,6 +1,6 @@
-insert into JAS (JASDM, JASMC, JXLDM, JXLDM_DISPLAY, XXXQDM, XXXQDM_DISPLAY, JASLXDM, JASLXDM_DISPLAY, ZT,
-                 LC, JSYT, SKZWS, KSZWS, XNXQDM, XNXQDM2, DWDM, DWDM_DISPLAY, ZWSXDM, XGDD, SYRQ, SYSJ,
-                 SXLB, BZ, SFYPK, SFYXPK, PKYXJ, SFKSWH, SFYXKS, KSYXJ, SFYXCX, SFYXJY, SFYXZX)
+insert into jas (jasdm, jasmc, jxldm, jxldm_display, xxxqdm, xxxqdm_display, jaslxdm, jaslxdm_display, zt,
+                 lc, jsyt, skzws, kszws, xnxqdm, xnxqdm2, dwdm, dwdm_display, zwsxdm, xgdd, syrq, sysj,
+                 sxlb, bz, sfypk, sfyxpk, pkyxj, sfkswh, sfyxks, ksyxj, sfyxcx, sfyxjy, sfyxzx)
 values ('1102009001', '信息楼101', '1009', '信息楼', '1', '随园校区', '102', '多媒体教室', '1', 1, null, 32, 16, null,
         null, '00',
         '教务处', null, null, null, null, null, null, null, true, null, null, true, null, null, true, false),

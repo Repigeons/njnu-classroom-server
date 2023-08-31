@@ -1,20 +1,15 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.commons.api.CommonPageable
+import cn.repigeons.njnu.classroom.commons.api.CommonPage
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.mbg.mapper.TimetableDynamicSqlSupport
-import cn.repigeons.njnu.classroom.mbg.mapper.TimetableMapper
-import cn.repigeons.njnu.classroom.mbg.model.Timetable
+import cn.repigeons.njnu.classroom.mbg.dao.TimetableDAO
 import cn.repigeons.njnu.classroom.model.TimetableVO
 import cn.repigeons.njnu.classroom.service.SearchService
-import com.github.pagehelper.PageHelper
-import com.github.pagehelper.PageInfo
-import org.mybatis.dynamic.sql.util.kotlin.elements.*
 import org.springframework.stereotype.Service
 
 @Service
 class SearchServiceImpl(
-    private val timetableMapper: TimetableMapper
+    private val timetableDAO: TimetableDAO,
 ) : SearchService {
     override fun search(
         jcKs: Short,
@@ -25,31 +20,17 @@ class SearchServiceImpl(
         keyword: String?,
         page: Int,
         size: Int,
-    ): CommonPageable<TimetableVO> {
-        PageHelper.startPage<Timetable>(page, size)
-        val records = timetableMapper.select {
-            val dsl = it.where(TimetableDynamicSqlSupport.jcKs, isGreaterThanOrEqualTo(jcKs))
-                .and(TimetableDynamicSqlSupport.jcJs, isLessThanOrEqualTo(jcJs))
-            weekday?.run {
-                dsl.and(TimetableDynamicSqlSupport.weekday, isEqualTo(this.name))
-            }
-            jxlmc?.run {
-                dsl.and(TimetableDynamicSqlSupport.jxlmc, isEqualTo(this))
-            }
-            zylxdm?.run {
-                dsl.and(TimetableDynamicSqlSupport.zylxdm, isEqualTo(this))
-            }
-            keyword?.run {
-                val value = "%$this%"
-                dsl.and(TimetableDynamicSqlSupport.kcm, isLike(value), or {
-                    it.where(TimetableDynamicSqlSupport.jyytms, isLike(value))
-                })
-            }
+    ): CommonPage<TimetableVO> {
+        val commonPage = CommonPage.query(page, size) {
+            timetableDAO.select(
+                jcKs = jcKs,
+                jcJs = jcJs,
+                weekday = weekday?.name,
+                jxlmc = jxlmc,
+                zylxdm = zylxdm,
+                keyword = keyword,
+            )
         }
-        val pageInfo = PageInfo(records)
-        val list = pageInfo.list.map {
-            TimetableVO(it)
-        }
-        return CommonPageable(list, pageInfo)
+        return commonPage.map(::TimetableVO)
     }
 }

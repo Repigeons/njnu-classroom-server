@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.component
 
-import cn.repigeons.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 
 object Resources {
     val zylxdm: List<*> = javaClass.getResourceAsStream("/zylxdm.json")!!.reader().run {

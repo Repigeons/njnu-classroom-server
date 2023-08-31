@@ -1,14 +1,15 @@
 package cn.repigeons.njnu.classroom.controller
 
 
-import cn.repigeons.commons.api.CommonResponse
-import cn.repigeons.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.commons.model.RequestPayload
-import cn.repigeons.njnu.classroom.commons.util.JwtUtil
-import cn.repigeons.njnu.classroom.mbg.mapper.*
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.commons.utils.JwtUtils
+import cn.repigeons.njnu.classroom.mbg.mapper.UserFavoritesDynamicSqlSupport
+import cn.repigeons.njnu.classroom.mbg.mapper.UserFavoritesMapper
 import cn.repigeons.njnu.classroom.mbg.model.UserFavorites
 import cn.repigeons.njnu.classroom.model.UserFavoritesDTO
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrElse
@@ -25,11 +26,11 @@ class UserFavoritesController(
      * 查询用户收藏
      */
     @GetMapping("favorites")
-    fun getFavorites(
+    suspend fun getFavorites(
         @RequestHeader("Authorization") token: String
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         val openid = token2openid(token)
-            ?: return CommonResponse.unauthorized()
+            ?: return CommonResult.unauthorized()
         val records = userFavoritesMapper.select {
             it.where(UserFavoritesDynamicSqlSupport.openid, isEqualTo(openid))
         }
@@ -45,19 +46,19 @@ class UserFavoritesController(
                 remark = GsonUtils.fromJson(record.remark),
             )
         }
-        return CommonResponse.success(data)
+        return CommonResult.success(data)
     }
 
     /**
      * 新增/修改用户收藏
      */
     @PostMapping("favorites")
-    fun saveFavorites(
+    suspend fun saveFavorites(
         @RequestHeader("Authorization") token: String,
         @RequestBody payload: UserFavoritesDTO
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         val openid = token2openid(token)
-            ?: return CommonResponse.unauthorized()
+            ?: return CommonResult.unauthorized()
         val record = UserFavorites().apply {
             this.id = payload.id
             this.openid = openid
@@ -73,7 +74,7 @@ class UserFavoritesController(
             userFavoritesMapper.insert(record)
         else
             userFavoritesMapper.updateByPrimaryKey(record)
-        return CommonResponse.success(
+        return CommonResult.success(
             mapOf(
                 "id" to record.id
             )
@@ -84,23 +85,20 @@ class UserFavoritesController(
      * 删除用户收藏
      */
     @DeleteMapping("favorites")
-    fun deleteFavorites(
+    suspend fun deleteFavorites(
         @RequestHeader("Authorization") token: String,
-        @RequestBody payload: RequestPayload<Long>
-    ): CommonResponse<*> {
+        @RequestParam id: Long,
+    ): CommonResult<*> {
         val openid = token2openid(token)
-            ?: return CommonResponse.unauthorized()
-        val id = requireNotNull(payload["id"]) { "请求参数缺失：id" }
+            ?: return CommonResult.unauthorized()
         val record = userFavoritesMapper.selectByPrimaryKey(id)
-            .getOrElse { return CommonResponse.failed("记录不存在") }
+            .getOrElse { return CommonResult.failed("记录不存在") }
         if (record.openid != openid)
-            return CommonResponse.forbidden()
+            return CommonResult.forbidden()
         userFavoritesMapper.deleteByPrimaryKey(id)
-        return CommonResponse.success()
+        return CommonResult.success()
     }
 
-    private fun token2openid(token: String) =
-        token.takeIf { token.startsWith(JwtUtil.TOKEN_HEAD) }
-            ?.let { JwtUtil.parse(it) }
-            ?.subject
+    private suspend fun token2openid(token: String) =
+        JwtUtils.parse(token).awaitSingleOrNull()?.subject
 }

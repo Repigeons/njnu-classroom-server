@@ -1,64 +1,64 @@
-create table JAS
+create table jas
 (
-    JASDM           char(10)         not null comment '教室代码' primary key,
-    JASMC           varchar(32)      not null comment '教室名称',
-    JXLDM           varchar(8)       not null comment '教学楼代码',
-    JXLDM_DISPLAY   varchar(16)      not null comment '教学楼名称',
-    XXXQDM          varchar(4)       not null comment '学校校区代码',
-    XXXQDM_DISPLAY  varchar(16)      not null comment '学校校区名称',
-    JASLXDM         varchar(8)       null comment '教室类型代码',
-    JASLXDM_DISPLAY varchar(16)      null comment '教室类型名称',
-    ZT              varchar(8)       null comment '状态',
-    LC              smallint(1)      null comment '楼层',
-    JSYT            text             null comment '教室用途',
-    SKZWS           int              not null comment '上课座位数',
-    KSZWS           int              not null comment '考试座位数',
-    XNXQDM          varchar(32)      null comment '学年学期代码',
-    XNXQDM2         varchar(32)      null comment '学年学期代码2',
-    DWDM            varchar(32)      null comment '管理单位代码',
-    DWDM_DISPLAY    varchar(32)      null comment '管理单位名称',
-    ZWSXDM          varchar(8)       null comment '座位属性代码',
-    XGDD            text             null comment '相关地点',
-    SYRQ            varchar(32)      null comment '使用日期',
-    SYSJ            varchar(32)      null comment '使用时间',
-    SXLB            varchar(32)      null comment '实习类别',
-    BZ              text             null comment '备注',
-    SFYPK           bit              null comment '是否已排课',
-    SFYXPK          bit              null comment '是否允许排课',
-    PKYXJ           varchar(32)      null comment '排课优先级',
-    SFKSWH          bit              null comment '是否考试维护',
-    SFYXKS          bit              null comment '是否允许考试',
-    KSYXJ           varchar(32)      null comment '考试优先级',
-    SFYXCX          bit              null comment '是否允许查询',
-    SFYXJY          bit              null comment '是否允许借用',
-    SFYXZX          bit default b'0' not null comment '是否允许自习'
+    jasdm           char(10)         not null comment '教室代码' primary key,
+    jasmc           varchar(32)      not null comment '教室名称',
+    jxldm           varchar(8)       not null comment '教学楼代码',
+    jxldm_display   varchar(16)      not null comment '教学楼名称',
+    xxxqdm          varchar(4)       not null comment '学校校区代码',
+    xxxqdm_display  varchar(16)      not null comment '学校校区名称',
+    jaslxdm         varchar(8)       null comment '教室类型代码',
+    jaslxdm_display varchar(16)      null comment '教室类型名称',
+    zt              varchar(8)       null comment '状态',
+    lc              smallint(1)      null comment '楼层',
+    jsyt            text             null comment '教室用途',
+    skzws           int              not null comment '上课座位数',
+    kszws           int              not null comment '考试座位数',
+    xnxqdm          varchar(32)      null comment '学年学期代码',
+    xnxqdm2         varchar(32)      null comment '学年学期代码2',
+    dwdm            varchar(32)      null comment '管理单位代码',
+    dwdm_display    varchar(32)      null comment '管理单位名称',
+    zwsxdm          varchar(8)       null comment '座位属性代码',
+    xgdd            text             null comment '相关地点',
+    syrq            varchar(32)      null comment '使用日期',
+    sysj            varchar(32)      null comment '使用时间',
+    sxlb            varchar(32)      null comment '实习类别',
+    bz              text             null comment '备注',
+    sfypk           bit              null comment '是否已排课',
+    sfyxpk          bit              null comment '是否允许排课',
+    pkyxj           varchar(32)      null comment '排课优先级',
+    sfkswh          bit              null comment '是否考试维护',
+    sfyxks          bit              null comment '是否允许考试',
+    ksyxj           varchar(32)      null comment '考试优先级',
+    sfyxcx          bit              null comment '是否允许查询',
+    sfyxjy          bit              null comment '是否允许借用',
+    sfyxzx          bit default b'0' not null comment '是否允许自习'
 )
     comment '教室列表'
     engine = InnoDB
     collate utf8mb4_general_ci;
-create index JAS_JXLDM_index on JAS (JXLDM);
+create index jas_jxldm_index on jas (jxldm);
 
-create table KCB
+create table kcb
 (
     id      int auto_increment primary key,
-    JXLMC   varchar(32)                                            not null comment '教学楼名称',
+    jxlmc   varchar(32)                                            not null comment '教学楼名称',
     jsmph   varchar(32)                                            not null comment '教室门牌号',
-    JASDM   char(10)                                               not null comment '教室代码',
-    SKZWS   int                                                    not null comment '座位数',
+    jasdm   char(10)                                               not null comment '教室代码',
+    skzws   int                                                    not null comment '座位数',
     zylxdm  char(2) default '00'                                   not null comment '类型代码',
     jc_ks   smallint(2)                                            not null comment '节次_开始',
     jc_js   smallint(2)                                            not null comment '节次_结束',
     jyytms  text                                                   not null comment '借用用途说明',
     kcm     text                                                   not null comment '课程名',
-    weekday enum ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat') not null comment '星期',
-    SFYXZX  bit     default b'0'                                   not null comment '是否允许自习'
+    weekday enum ('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat') not null comment '星期',
+    sfyxzx  bit     default b'0'                                   not null comment '是否允许自习'
 )
     comment '原始课程表'
-    engine = InnoDB
+    engine = innodb
     collate utf8mb4_general_ci;
-create index kcb_jasdm_index on KCB (JASDM);
-create index kcb_jxl_index on KCB (JXLMC);
-create index kcb_weekday_index on KCB (weekday);
+create index kcb_jasdm_index on kcb (jasdm);
+create index kcb_jxl_index on kcb (jxlmc);
+create index kcb_weekday_index on kcb (weekday);
 
 create table correction
 (

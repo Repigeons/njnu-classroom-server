@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Service
-open class NoticeServiceImpl(
+class NoticeServiceImpl(
     private val noticeMapper: NoticeMapper
 ) : NoticeService {
     private val df = SimpleDateFormat("yyyy-MM-dd")

@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableCaching
 @EnableScheduling
 @SpringBootApplication
-open class PortalApplication
+class PortalApplication
 
 fun main(args: Array<String>) {
     runApplication<PortalApplication>(*args)

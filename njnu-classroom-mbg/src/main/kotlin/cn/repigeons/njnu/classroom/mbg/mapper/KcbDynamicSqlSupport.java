@@ -1,8 +1,9 @@
 package cn.repigeons.njnu.classroom.mbg.mapper;
 
-import java.sql.JDBCType;
 import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
+
+import java.sql.JDBCType;
 
 public final class KcbDynamicSqlSupport {
     public static final Kcb kcb = new Kcb();
@@ -70,13 +71,13 @@ public final class KcbDynamicSqlSupport {
     public static final class Kcb extends AliasableSqlTable<Kcb> {
         public final SqlColumn<Integer> id = column("id", JDBCType.INTEGER);
 
-        public final SqlColumn<String> jxlmc = column("JXLMC", JDBCType.VARCHAR);
+        public final SqlColumn<String> jxlmc = column("jxlmc", JDBCType.VARCHAR);
 
         public final SqlColumn<String> jsmph = column("jsmph", JDBCType.VARCHAR);
 
-        public final SqlColumn<String> jasdm = column("JASDM", JDBCType.CHAR);
+        public final SqlColumn<String> jasdm = column("jasdm", JDBCType.CHAR);
 
-        public final SqlColumn<Integer> skzws = column("SKZWS", JDBCType.INTEGER);
+        public final SqlColumn<Integer> skzws = column("skzws", JDBCType.INTEGER);
 
         public final SqlColumn<String> zylxdm = column("zylxdm", JDBCType.CHAR);
 
@@ -86,14 +87,14 @@ public final class KcbDynamicSqlSupport {
 
         public final SqlColumn<String> weekday = column("weekday", JDBCType.VARCHAR);
 
-        public final SqlColumn<Boolean> sfyxzx = column("SFYXZX", JDBCType.BIT);
+        public final SqlColumn<Boolean> sfyxzx = column("sfyxzx", JDBCType.BIT);
 
         public final SqlColumn<String> jyytms = column("jyytms", JDBCType.LONGVARCHAR);
 
         public final SqlColumn<String> kcm = column("kcm", JDBCType.LONGVARCHAR);
 
         public Kcb() {
-            super("KCB", Kcb::new);
+            super("kcb", Kcb::new);
         }
     }
 }

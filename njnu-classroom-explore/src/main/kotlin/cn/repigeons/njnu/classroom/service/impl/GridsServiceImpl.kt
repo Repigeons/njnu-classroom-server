@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
-open class GridsServiceImpl(
+class GridsServiceImpl(
     private val gridsMapper: GridsMapper
 ) : GridsService {
     @Cacheable("grids")

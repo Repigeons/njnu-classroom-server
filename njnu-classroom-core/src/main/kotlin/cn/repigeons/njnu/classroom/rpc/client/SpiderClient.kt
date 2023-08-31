@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.rpc.client
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.rpc.fallback.SpiderClientFallback
 import org.springframework.cloud.openfeign.FeignClient
@@ -21,5 +21,5 @@ interface SpiderClient {
         @RequestParam weekday: Weekday,
         @RequestParam jc: Short,
         @RequestParam zylxdm: String
-    ): CommonResponse<Boolean>
+    ): CommonResult<Boolean>
 }

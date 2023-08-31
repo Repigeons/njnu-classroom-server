@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.model.EmptyClassroomFeedbackDTO
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
@@ -16,13 +16,13 @@ class ActionController(
     private val emptyClassroomService: EmptyClassroomService
 ) {
     @PostMapping("flushCache")
-    fun flushCache(): CommonResponse<*> {
+    fun flushCache(): CommonResult<*> {
         cacheService.flushCache()
-        return CommonResponse.success()
+        return CommonResult.success()
     }
 
     @PostMapping("emptyClassroom/feedback")
-    fun feedbackEmptyClassroom(@RequestBody dto: EmptyClassroomFeedbackDTO): CommonResponse<*> {
+    fun feedbackEmptyClassroom(@RequestBody dto: EmptyClassroomFeedbackDTO): CommonResult<*> {
         emptyClassroomService.feedback(
             jxlmc = dto.jxlmc,
             weekday = dto.weekday,
@@ -30,12 +30,12 @@ class ActionController(
             results = dto.results,
             index = dto.index,
         )
-        return CommonResponse.success()
+        return CommonResult.success()
     }
 
     @PostMapping("classrooms/flush")
-    fun flushClassrooms(): CommonResponse<*> {
+    fun flushClassrooms(): CommonResult<*> {
         cacheService.flushClassrooms()
-        return CommonResponse.success()
+        return CommonResult.success()
     }
 }

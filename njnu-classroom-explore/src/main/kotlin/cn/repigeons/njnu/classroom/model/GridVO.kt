@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.model
 
-import cn.repigeons.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.mbg.model.Grids
 
 data class GridVO(

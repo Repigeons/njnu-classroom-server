@@ -1,16 +1,17 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.commons.redisService.RedisService
+import cn.repigeons.njnu.classroom.commons.service.RedisService
 import cn.repigeons.njnu.classroom.model.TimetableVO
 import cn.repigeons.njnu.classroom.service.OverviewService
+import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service
 
 @Service
 class OverviewServiceImpl(
-    private val redisService: RedisService
+    private val redisService: RedisService,
 ) : OverviewService {
-    override fun getOverview(jasdm: String): List<TimetableVO> =
-        requireNotNull(redisService.hGet("core::overview", jasdm) as List<*>?) {
-            "无效参数: [jasdm]"
-        }.map { it as TimetableVO }
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun getOverview(jasdm: String): List<TimetableVO> =
+        redisService.opsForHash().getAndAwait("core::overview", jasdm) as? List<TimetableVO>
+            ?: throw IllegalArgumentException("无效参数: [jasdm]")
 }

@@ -1,7 +1,8 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.commons.utils.ThreadPoolUtils
 import cn.repigeons.njnu.classroom.mbg.dao.KcbDAO
 import cn.repigeons.njnu.classroom.mbg.dao.TimetableDAO
 import cn.repigeons.njnu.classroom.mbg.mapper.*
@@ -34,7 +35,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Service
-open class SpiderServiceImpl(
+class SpiderServiceImpl(
     private val redissonClient: RedissonClient,
     private val sqlSessionFactory: SqlSessionFactory,
     private val coreClient: CoreClient,
@@ -55,11 +56,11 @@ open class SpiderServiceImpl(
     private lateinit var httpClient: OkHttpClient
 
     @Scheduled(cron = "0 0 8 * * ?")
-    override fun run(): CompletableFuture<*> = CompletableFuture.supplyAsync {
+    override fun run(): CompletableFuture<Void> = ThreadPoolUtils.runAsync {
         val lock = redissonClient.getLock("lock::spider")
         if (!lock.tryLock()) {
             logger.info("课程信息收集工作已处于运行中...")
-            return@supplyAsync
+            return@runAsync
         }
         try {
             logger.info("开始课程信息收集工作...")
@@ -106,7 +107,7 @@ open class SpiderServiceImpl(
     override fun getTimeInfo(): TimeInfo {
         val timeInfo = TimeInfo()
         val request1 = Request.Builder()
-            .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxdqxnxq.do")
+            .url("https://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxdqxnxq.do")
             .build()
         val response1 = httpClient.newCall(request1).execute()
         val result1 = response1.body?.string()
@@ -127,7 +128,7 @@ open class SpiderServiceImpl(
             .add("RQ", rqFormatter.format(LocalDateTime.now()))
             .build()
         val request2 = Request.Builder()
-            .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxrqdydzcxq.do")
+            .url("https://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxrqdydzcxq.do")
             .post(requestBody2)
             .build()
         val response2 = httpClient.newCall(request2).execute()
@@ -148,7 +149,7 @@ open class SpiderServiceImpl(
             .add("RQ", rqFormatter.format(LocalDateTime.now()))
             .build()
         val request3 = Request.Builder()
-            .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxxljc.do")
+            .url("https://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxxljc.do")
             .post(requestBody3)
             .build()
         val response3 = httpClient.newCall(request3).execute()
@@ -201,8 +202,8 @@ open class SpiderServiceImpl(
         }
     }
 
-    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<*> =
-        CompletableFuture.supplyAsync {
+    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<Void> =
+        ThreadPoolUtils.runAsync {
             val thisWeek = timeInfo.ZC
             val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
             val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
@@ -241,7 +242,7 @@ open class SpiderServiceImpl(
             .add("JASDM", jasdm)
             .build()
         val request = Request.Builder()
-            .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
+            .url("https://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
             .post(requestBody)
             .build()
         val response = httpClient.newCall(request).execute()
@@ -318,7 +319,7 @@ open class SpiderServiceImpl(
         jxlmc: String,
         records: List<Timetable>,
         result: MutableMap<String, MutableList<Timetable>>
-    ): CompletableFuture<*> = CompletableFuture.supplyAsync {
+    ): CompletableFuture<Void> = ThreadPoolUtils.runAsync {
         logger.info("[{}] 开始归并...", jxlmc)
         val classrooms = mutableListOf<Timetable>()
         result[jxlmc] = classrooms

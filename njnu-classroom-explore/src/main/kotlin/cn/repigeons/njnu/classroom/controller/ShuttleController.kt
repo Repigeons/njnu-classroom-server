@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.service.ShuttleService
 import org.springframework.web.bind.annotation.*
@@ -15,13 +15,13 @@ class ShuttleController(
     private val shuttleService: ShuttleService
 ) {
     @GetMapping("stations.json")
-    fun getStations() = CommonResponse.success(shuttleService.getStationPosition())
+    fun getStations() = CommonResult.success(shuttleService.getStationPosition())
 
     @GetMapping("getRoutes")
     fun getShuttle(
         @RequestParam weekday: Weekday
-    ): CommonResponse<*> {
-        return CommonResponse.success(
+    ): CommonResult<*> {
+        return CommonResult.success(
             listOf(
                 shuttleService.getRoute(weekday, 1),
                 shuttleService.getRoute(weekday, 2),
@@ -30,13 +30,13 @@ class ShuttleController(
     }
 
     @PostMapping("uploadImage")
-    fun uploadShuttleImage(
+    suspend fun uploadShuttleImage(
         @RequestParam file: MultipartFile
-    ): CommonResponse<*> {
+    ): CommonResult<*> {
         if (file.contentType?.startsWith("image/") == true) {
             shuttleService.sendShuttleImage(file)
-            return CommonResponse.success()
+            return CommonResult.success()
         }
-        return CommonResponse.forbidden("仅支持图片类型")
+        return CommonResult.failed("仅支持图片类型")
     }
 }

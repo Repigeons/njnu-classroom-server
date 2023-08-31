@@ -15,7 +15,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
-open class CookieServiceImpl(
+class CookieServiceImpl(
     @Value("\${account.username}")
     private val username: String,
     @Value("\${account.password}")

@@ -1,6 +1,7 @@
 package cn.repigeons.njnu.classroom.service.impl
 
-import cn.repigeons.commons.redisService.RedisService
+import cn.repigeons.njnu.classroom.commons.service.RedisService
+import cn.repigeons.njnu.classroom.commons.utils.ThreadPoolUtils
 import cn.repigeons.njnu.classroom.mbg.mapper.*
 import cn.repigeons.njnu.classroom.model.ClassroomVO
 import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
@@ -8,17 +9,21 @@ import cn.repigeons.njnu.classroom.model.PositionVO
 import cn.repigeons.njnu.classroom.model.TimetableVO
 import cn.repigeons.njnu.classroom.service.CacheService
 import jakarta.annotation.PostConstruct
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.future
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.redis.core.putAllAndAwait
 import org.springframework.stereotype.Service
 import java.util.concurrent.CompletableFuture
 
 @Service
-open class CacheServiceImpl(
+class CacheServiceImpl(
     private val redissonClient: RedissonClient,
     private val redisService: RedisService,
     private val jasMapper: JasMapper,
@@ -65,11 +70,11 @@ open class CacheServiceImpl(
     }
 
     @PostConstruct
-    override fun flushCache(): CompletableFuture<*> = CompletableFuture.supplyAsync {
+    override fun flushCache(): CompletableFuture<Void> = ThreadPoolUtils.runAsync {
         val lock = redissonClient.getLock("lock:flushCache")
         if (!lock.tryLock()) {
             logger.info("刷新缓存数据已处于运行中...")
-            return@supplyAsync
+            return@runAsync
         }
         try {
             logger.info("开始刷新缓存数据...")
@@ -84,8 +89,9 @@ open class CacheServiceImpl(
         }
     }
 
-    private fun flushEmptyClassrooms(): CompletableFuture<*> = CompletableFuture.supplyAsync {
-        redisService.del("core::empty")
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun flushEmptyClassrooms(): CompletableFuture<Unit> = GlobalScope.future {
+        redisService.delete("core::empty")
         logger.info("开始刷新空教室缓存...")
         val pairs = timetableMapper.select {
             it.where(TimetableDynamicSqlSupport.zylxdm, isIn("00", "10", "11"))
@@ -96,19 +102,20 @@ open class CacheServiceImpl(
             .map { (key, records) ->
                 key to records.map { EmptyClassroomVO(it) }
             }
-        redisService.hSetAll("core::empty", mapOf(*pairs.toTypedArray()))
+        redisService.opsForHash().putAllAndAwait("core::empty", mapOf(*pairs.toTypedArray()))
         logger.info("空教室缓存刷新完成")
     }
 
-    private fun flushOverview(): CompletableFuture<*> = CompletableFuture.supplyAsync {
-        redisService.del("core::overview")
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun flushOverview(): CompletableFuture<Unit> = GlobalScope.future {
+        redisService.delete("core::overview")
         logger.info("开始刷新教室概览缓存...")
         val pairs = timetableMapper.select { it }
             .groupBy { it.jasdm }
             .map { (key, records) ->
                 key to records.map { TimetableVO(it) }
             }
-        redisService.hSetAll("core::overview", mapOf(*pairs.toTypedArray()))
+        redisService.opsForHash().putAllAndAwait("core::overview", mapOf(*pairs.toTypedArray()))
         logger.info("教室概览缓存刷新完成")
     }
 }

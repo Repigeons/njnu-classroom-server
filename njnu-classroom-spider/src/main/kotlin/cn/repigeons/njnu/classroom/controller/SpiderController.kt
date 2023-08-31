@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.controller
 
-import cn.repigeons.commons.api.CommonResponse
+import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.service.SpiderService
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,9 +12,9 @@ class SpiderController(
     private val spiderService: SpiderService,
 ) {
     @PostMapping("run")
-    fun runSpider(): CommonResponse<*> {
+    fun runSpider(): CommonResult<*> {
         spiderService.run()
-        return CommonResponse.success()
+        return CommonResult.success()
     }
 
     @PostMapping("checkWithEhall")
@@ -23,8 +23,8 @@ class SpiderController(
         @RequestParam weekday: Weekday,
         @RequestParam jc: Short,
         @RequestParam zylxdm: String
-    ): CommonResponse<Boolean> {
+    ): CommonResult<Boolean> {
         val result = spiderService.checkWithEhall(jasdm, weekday, jc, zylxdm)
-        return CommonResponse.success(result)
+        return CommonResult.success(result)
     }
 }

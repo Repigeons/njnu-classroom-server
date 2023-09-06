@@ -66,6 +66,8 @@ class SpiderServiceImpl(
             logger.info("开始课程信息收集工作...")
             this.actRun()
             coreClient.flushCache()
+        } catch (e: Exception) {
+            logger.error("课程信息收集失败: {}", e.message, e)
         } finally {
             lock.unlock()
         }

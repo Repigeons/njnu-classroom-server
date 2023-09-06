@@ -1,5 +1,6 @@
 package cn.repigeons.njnu.classroom.service.impl
 
+import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.mbg.mapper.UsersMapper
 import cn.repigeons.njnu.classroom.mbg.model.Users
 import cn.repigeons.njnu.classroom.model.Code2SessionResp
@@ -35,7 +36,8 @@ class SsoServiceImpl(
         val resp = webClient.get()
             .uri(url)
             .retrieve()
-            .bodyToMono<Code2SessionResp>()
+            .bodyToMono<String>()
+            .map { GsonUtils.fromJson<Code2SessionResp>(it) }
             .awaitSingle()
         check(resp.errcode?.takeUnless { it == 0 } == null) {
             resp.errmsg ?: "errcode=${resp.errcode}"

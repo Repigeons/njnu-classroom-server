@@ -35,10 +35,20 @@ publish: .init
 	@git init /opt/njnu-classroom-server.git
 	@cd /opt/njnu-classroom-server.git && git fetch ${url} --depth=1 ${branch} && git reset --hard FETCH_HEAD
 	# Compile & Package
-	@cd /opt/njnu-classroom-server.git && mvn clean kotlin:compile package -Dmaven.test.skip=true -am -pl "njnu-classroom-${service}"
+	@cd /opt/njnu-classroom-server.git && mvn clean package -Dmaven.test.skip=true -am -pl "njnu-classroom-${service}"
 	# Build docker image & Startup
-	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml build ${service}_${env}
-	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push ${service}_${env}
+	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml build "${service}_${env}"
+	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push "${service}_${env}"
+
+all: .init
+	# Update code
+	@git init /opt/njnu-classroom-server.git
+	@cd /opt/njnu-classroom-server.git && git fetch ${url} --depth=1 ${branch} && git reset --hard FETCH_HEAD
+	# Compile & Package
+	@cd /opt/njnu-classroom-server.git && mvn clean package -Dmaven.test.skip=true
+	# Build docker image & Startup
+	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml build
+	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push
 
 init: .init
 	# Initialized.
@@ -52,7 +62,5 @@ init: .init
 	@cp /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml /opt/njnu-classroom/
 	# Build base image
 	@docker build -f /opt/njnu-classroom-server.git/njnu-classroom-spider/base.Dockerfile -t njnu-classroom.io/njnu-classroom-spider:base /opt/njnu-classroom
-	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml build nginx
-	@docker compose -f /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml push nginx
 	# Completed
 	@touch .init

@@ -25,7 +25,11 @@ make init
 
 ```shell
 make env="prd" service="spider"
-# 其中env为环境，可选dev和prd，service为服务名称，包括 spider,portal,core,explore 
+# 其中env为环境，可选dev和prd，service为服务名称，包括 spider,portal,core,explore
+```
+
+```shell
+make all env="prd"  # 可直接发布全部模块
 ```
 
 ### 启动服务

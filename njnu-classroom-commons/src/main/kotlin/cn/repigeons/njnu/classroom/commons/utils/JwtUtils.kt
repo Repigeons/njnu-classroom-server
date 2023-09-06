@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.impl.DefaultClaims
 import io.jsonwebtoken.security.Keys
 import kotlinx.coroutines.reactor.mono
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -25,8 +26,9 @@ private class JwtConfig(
 private lateinit var jwtConfig: JwtConfig
 
 object JwtUtils {
+    private const val TOKEN_HEAD = "Bearer"
     private val secretKey = Keys.hmacShaKeyFor(jwtConfig.secret.repeat(2).toByteArray())
-    const val TOKEN_HEAD = "Bearer"
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun generate(subject: String) = mono {
         val claims = DefaultClaims().setSubject(subject)
@@ -41,15 +43,16 @@ object JwtUtils {
     }
 
     fun parse(token: String) = mono {
-        val claimsJws = if (token.startsWith(TOKEN_HEAD)) token.substringAfter(TOKEN_HEAD).trim() else token.trim()
         try {
+            val claimsJws = token.substringAfter(TOKEN_HEAD).trim()
             Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(claimsJws)
                 .body
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.error("token无效: {}", token)
+            logger.error("token无效: {}", e.message, e)
             null
         }
     }

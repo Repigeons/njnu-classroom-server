@@ -17,7 +17,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handle(e: Exception, exchange: ServerWebExchange): CommonResult<Nothing> {
         val request = exchange.request
-        logger.error("全局异常：{} {}", request.method, request.uri)
+        logger.error("全局异常：{} {}", request.method, request.path)
         request.queryParams.forEach { (key: String, value: List<String>) ->
             logger.error("*****请求参数*****:{},{}", key, value)
         }

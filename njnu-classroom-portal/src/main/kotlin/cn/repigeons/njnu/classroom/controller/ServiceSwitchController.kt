@@ -3,6 +3,7 @@ package cn.repigeons.njnu.classroom.controller
 import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.service.RedisService
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -16,7 +17,7 @@ class ServiceSwitchController(
     private val redisService: RedisService,
 ) {
     private suspend fun get() =
-        redisService.opsForValue().get("serviceSwitch").awaitSingle() as? Boolean ?: true
+        redisService.opsForValue().get("serviceSwitch").awaitSingleOrNull() as? Boolean ?: true
 
     private suspend fun set(value: Boolean) =
         redisService.opsForValue().set("serviceSwitch", value).awaitSingle()

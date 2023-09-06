@@ -5,12 +5,11 @@ import cn.repigeons.njnu.classroom.mbg.mapper.UsersMapper
 import cn.repigeons.njnu.classroom.mbg.model.Users
 import cn.repigeons.njnu.classroom.model.Code2SessionResp
 import cn.repigeons.njnu.classroom.service.SsoService
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 import kotlin.jvm.optionals.getOrDefault
@@ -33,12 +32,11 @@ class SsoServiceImpl(
             .queryParam("js_code", jsCode)
             .queryParam("grant_type", "authorization_code")
             .toUriString()
-        val resp = webClient.get()
+        val body = webClient.get()
             .uri(url)
             .retrieve()
-            .bodyToMono<String>()
-            .map { GsonUtils.fromJson<Code2SessionResp>(it) }
-            .awaitSingle()
+            .awaitBody<String>()
+        val resp = GsonUtils.fromJson<Code2SessionResp>(body)
         check(resp.errcode?.takeUnless { it == 0 } == null) {
             resp.errmsg ?: "errcode=${resp.errcode}"
         }

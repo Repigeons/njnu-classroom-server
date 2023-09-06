@@ -43,7 +43,7 @@ interface TimetableDAO {
                 and zylxdm = #{zylxdm}
             </if>
             <if test='keyword != null'>
-                and (kcm like #{zylxdm} or jyytms like #{zylxdm})
+                and (kcm like #{keyword} or jyytms like #{keyword})
             </if>
         </script>"""
     )

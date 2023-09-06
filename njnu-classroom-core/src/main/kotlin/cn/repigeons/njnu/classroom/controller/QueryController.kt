@@ -7,8 +7,6 @@ import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import cn.repigeons.njnu.classroom.service.OverviewService
 import cn.repigeons.njnu.classroom.service.SearchService
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -48,7 +46,8 @@ class QueryController(
         @RequestParam(defaultValue = "") jxlmc: String,
         @RequestParam(defaultValue = "") zylxdm: String,
         @RequestParam(defaultValue = "") keyword: String,
-        @PageableDefault(page = 1) pageable: Pageable,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
     ): CommonResult<*> {
         val result = searchService.search(
             jcKs = jcKs,
@@ -57,8 +56,8 @@ class QueryController(
             jxlmc = jxlmc.takeUnless { it.isEmpty() },
             keyword = keyword.takeUnless { it.isEmpty() },
             zylxdm = zylxdm.takeUnless { it.isEmpty() },
-            page = pageable.pageNumber,
-            size = pageable.pageSize,
+            page = page,
+            size = size,
         )
         return CommonResult.success(result)
     }

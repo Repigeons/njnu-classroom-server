@@ -6,8 +6,8 @@ import cn.repigeons.njnu.classroom.mbg.model.Users
 import cn.repigeons.njnu.classroom.model.Code2SessionResp
 import cn.repigeons.njnu.classroom.service.SsoService
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -45,8 +45,7 @@ class SsoServiceImpl(
         return resp.openid!!
     }
 
-    @Async
-    override fun updateLoginRecordByOpenid(openid: String) {
+    override fun updateLoginRecordByOpenid(openid: String) = mono {
         val record = usersMapper.selectByPrimaryKey(openid).getOrDefault(Users())
         record.openid = openid
         record.lastLoginTime = Date()
@@ -56,5 +55,6 @@ class SsoServiceImpl(
         } else {
             usersMapper.updateByPrimaryKey(record)
         }
+        Unit
     }
 }

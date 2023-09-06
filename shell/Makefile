@@ -14,7 +14,6 @@ endif
 # service=
 # 从命令行传递, such as: make service="spider"
 ifndef service
-$(error "Undefined property: service, as can be used as 'make service='.")
 else ifeq (${service}, spider)
 else ifeq (${service}, portal)
 else ifeq (${service}, core)
@@ -53,14 +52,9 @@ all: .init
 init: .init
 	# Initialized.
 .init:
-	docker --version
 	# Initializing...
 	@git init /opt/njnu-classroom-server.git
 	@cd /opt/njnu-classroom-server.git && git fetch ${url} --depth=1 ${branch} && git reset --hard FETCH_HEAD
-	@mkdir -p /opt/njnu-classroom/application
-	# Copy docker-compose.build.yaml
-	@cp /opt/njnu-classroom-server.git/shell/docker-compose.build.yaml /opt/njnu-classroom/
-	# Build base image
 	@docker build -f /opt/njnu-classroom-server.git/njnu-classroom-spider/base.Dockerfile -t njnu-classroom.io/njnu-classroom-spider:base /opt/njnu-classroom
 	# Completed
 	@touch .init

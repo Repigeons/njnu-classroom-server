@@ -1,7 +1,7 @@
-package cn.repigeons.njnu.classroom.rpc.client
+package cn.repigeons.njnu.classroom.commons.rpc.client
 
 import cn.repigeons.njnu.classroom.commons.api.CommonResult
-import cn.repigeons.njnu.classroom.rpc.fallback.CoreClientFallback
+import cn.repigeons.njnu.classroom.commons.rpc.fallback.CoreClientFallback
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PostMapping
 

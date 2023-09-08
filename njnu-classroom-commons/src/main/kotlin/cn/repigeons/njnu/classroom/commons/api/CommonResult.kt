@@ -1,11 +1,15 @@
 package cn.repigeons.njnu.classroom.commons.api
 
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.HttpStatus
 
 data class CommonResult<T : Any>
 internal constructor(
+    @Schema(description = "状态码", defaultValue = "200", required = true, nullable = false)
     val status: Int,
+    @Schema(description = "错误信息", required = true, nullable = true)
     val message: String,
+    @Schema(required = true, nullable = true)
     val data: T?,
 ) {
     constructor(httpStatus: HttpStatus, data: T?) : this(httpStatus.value(), httpStatus.reasonPhrase, data)

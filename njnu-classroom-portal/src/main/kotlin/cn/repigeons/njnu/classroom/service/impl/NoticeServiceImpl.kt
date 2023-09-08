@@ -3,7 +3,7 @@ package cn.repigeons.njnu.classroom.service.impl
 import cn.repigeons.njnu.classroom.mbg.mapper.NoticeDynamicSqlSupport
 import cn.repigeons.njnu.classroom.mbg.mapper.NoticeMapper
 import cn.repigeons.njnu.classroom.mbg.model.Notice
-import cn.repigeons.njnu.classroom.model.NoticeVO
+import cn.repigeons.njnu.classroom.model.vo.NoticeVO
 import cn.repigeons.njnu.classroom.service.NoticeService
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable

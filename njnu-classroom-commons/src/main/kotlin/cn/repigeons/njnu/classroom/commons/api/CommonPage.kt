@@ -2,14 +2,20 @@ package cn.repigeons.njnu.classroom.commons.api
 
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageHelper
+import io.swagger.v3.oas.annotations.media.Schema
 
 data class CommonPage<T : Any>
 internal constructor(
+    @Schema(description = "分页页号", defaultValue = "1")
     val pageNum: Int,
+    @Schema(description = "分页大小", defaultValue = "10")
     val pageSize: Int,
+    @Schema(description = "总页数")
     val totalPage: Int,
+    @Schema(description = "总记录数")
     val total: Long,
-    val list: List<T>
+    @Schema(description = "当前页记录")
+    val list: List<T>,
 ) {
     constructor(pageInfo: Page<*>, list: List<T>) : this(
         pageNum = pageInfo.pageNum,

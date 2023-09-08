@@ -1,6 +1,7 @@
 package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
+import cn.repigeons.njnu.classroom.commons.rpc.client.SpiderClient
 import cn.repigeons.njnu.classroom.commons.service.RedisService
 import cn.repigeons.njnu.classroom.commons.utils.EmailUtils
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
@@ -12,7 +13,6 @@ import cn.repigeons.njnu.classroom.mbg.mapper.TimetableMapper
 import cn.repigeons.njnu.classroom.mbg.model.Correction
 import cn.repigeons.njnu.classroom.mbg.model.Feedback
 import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
-import cn.repigeons.njnu.classroom.rpc.client.SpiderClient
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import kotlinx.coroutines.DelicateCoroutinesApi

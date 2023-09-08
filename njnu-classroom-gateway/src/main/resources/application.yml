@@ -44,3 +44,24 @@ spring:
             - Path=/explore/**
           filters:
             - StripPrefix=1
+
+knife4j:
+  gateway:
+    enabled: true
+    routes:
+      - name: spider
+        service-name: njnu-classroom-spider
+        context-path: /spider
+        url: /spider/v3/api-docs
+      - name: portal
+        service-name: njnu-classroom-portal
+        context-path: /portal
+        url: /portal/v3/api-docs
+      - name: core
+        service-name: njnu-classroom-core
+        context-path: /core
+        url: /core/v3/api-docs
+      - name: explore
+        service-name: njnu-classroom-explore
+        context-path: /explore
+        url: /explore/v3/api-docs

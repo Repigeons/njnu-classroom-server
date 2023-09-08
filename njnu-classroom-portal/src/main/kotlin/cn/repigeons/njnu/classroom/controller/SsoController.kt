@@ -11,8 +11,8 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.web.bind.annotation.*
 
-@RestController
 @Tag(name = "用户服务")
+@RestController
 @RequestMapping("sso")
 class SsoController(
     private val ssoService: SsoService,

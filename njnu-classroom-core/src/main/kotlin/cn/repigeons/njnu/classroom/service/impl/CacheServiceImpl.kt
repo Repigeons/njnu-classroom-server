@@ -3,10 +3,10 @@ package cn.repigeons.njnu.classroom.service.impl
 import cn.repigeons.njnu.classroom.commons.service.RedisService
 import cn.repigeons.njnu.classroom.commons.utils.ThreadPoolUtils
 import cn.repigeons.njnu.classroom.mbg.mapper.*
-import cn.repigeons.njnu.classroom.model.ClassroomVO
-import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
-import cn.repigeons.njnu.classroom.model.PositionVO
-import cn.repigeons.njnu.classroom.model.TimetableVO
+import cn.repigeons.njnu.classroom.model.vo.ClassroomVO
+import cn.repigeons.njnu.classroom.model.vo.EmptyClassroomVO
+import cn.repigeons.njnu.classroom.model.vo.PositionVO
+import cn.repigeons.njnu.classroom.model.vo.TimetableVO
 import cn.repigeons.njnu.classroom.service.CacheService
 import jakarta.annotation.PostConstruct
 import kotlinx.coroutines.DelicateCoroutinesApi

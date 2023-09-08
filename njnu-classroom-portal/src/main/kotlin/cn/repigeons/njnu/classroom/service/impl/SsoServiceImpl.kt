@@ -3,7 +3,7 @@ package cn.repigeons.njnu.classroom.service.impl
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.mbg.mapper.UsersMapper
 import cn.repigeons.njnu.classroom.mbg.model.Users
-import cn.repigeons.njnu.classroom.model.Code2SessionResp
+import cn.repigeons.njnu.classroom.model.bo.Code2SessionResp
 import cn.repigeons.njnu.classroom.service.SsoService
 import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Value

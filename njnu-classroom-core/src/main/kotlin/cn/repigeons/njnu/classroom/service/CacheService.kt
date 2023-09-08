@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.service
 
-import cn.repigeons.njnu.classroom.model.ClassroomVO
-import cn.repigeons.njnu.classroom.model.PositionVO
+import cn.repigeons.njnu.classroom.model.vo.ClassroomVO
+import cn.repigeons.njnu.classroom.model.vo.PositionVO
 import java.util.concurrent.CompletableFuture
 
 interface CacheService {

@@ -1,32 +1,22 @@
-package cn.repigeons.njnu.classroom.model
+package cn.repigeons.njnu.classroom.model.vo
 
 import cn.repigeons.njnu.classroom.mbg.model.Timetable
+import io.swagger.v3.oas.annotations.media.Schema
 
+@Schema(description = "空教室信息")
 data class EmptyClassroomVO(
     val id: Int,
-    /**
-     * 教室代码
-     */
+    @Schema(description = "教室代码")
     val jasdm: String,
-    /**
-     * 教室门牌号
-     */
+    @Schema(description = "教室门牌号")
     val jsmph: String,
-    /**
-     * 上课座位数
-     */
+    @Schema(description = "上课座位数")
     val skzws: Int,
-    /**
-     * 开始节次
-     */
+    @Schema(description = "开始节次")
     val jcKs: Short,
-    /**
-     * 结束节次
-     */
+    @Schema(description = "结束节次")
     val jcJs: Short,
-    /**
-     * 资源类型代码
-     */
+    @Schema(description = "资源类型代码")
     val zylxdm: String,
 ) {
     constructor(record: Timetable) : this(

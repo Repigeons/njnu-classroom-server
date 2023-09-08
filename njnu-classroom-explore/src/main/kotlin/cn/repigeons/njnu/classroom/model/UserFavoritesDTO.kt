@@ -1,38 +1,23 @@
 package cn.repigeons.njnu.classroom.model
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
+import io.swagger.v3.oas.annotations.media.Schema
 
+@Schema(description = "用户收藏")
 data class UserFavoritesDTO(
-    /**
-     * 记录id
-     */
     val id: Long?,
-    /**
-     * 标题
-     */
+    @Schema(description = "标题")
     val title: String,
-    /**
-     * 星期
-     */
+    @Schema(description = "星期")
     val weekday: Weekday,
-    /**
-     * 开始节次
-     */
+    @Schema(description = "开始节次")
     val jcKs: Short,
-    /**
-     * 结束节次
-     */
+    @Schema(description = "结束节次")
     val jcJs: Short,
-    /**
-     * 地点
-     */
+    @Schema(description = "地点")
     val place: String,
-    /**
-     * 颜色
-     */
+    @Schema(description = "颜色")
     val color: String,
-    /**
-     * 备注
-     */
-    val remark: Map<String, *>
+    @Schema(description = "备注")
+    val remark: Map<String, *>,
 )

@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.service
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
+import cn.repigeons.njnu.classroom.model.vo.EmptyClassroomVO
 import java.util.concurrent.Future
 
 interface EmptyClassroomService {

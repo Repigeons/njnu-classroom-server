@@ -12,7 +12,7 @@ import cn.repigeons.njnu.classroom.mbg.mapper.TimetableDynamicSqlSupport
 import cn.repigeons.njnu.classroom.mbg.mapper.TimetableMapper
 import cn.repigeons.njnu.classroom.mbg.model.Correction
 import cn.repigeons.njnu.classroom.mbg.model.Feedback
-import cn.repigeons.njnu.classroom.model.EmptyClassroomVO
+import cn.repigeons.njnu.classroom.model.vo.EmptyClassroomVO
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import kotlinx.coroutines.DelicateCoroutinesApi

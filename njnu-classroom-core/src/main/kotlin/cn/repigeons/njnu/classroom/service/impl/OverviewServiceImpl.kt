@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.service.RedisService
-import cn.repigeons.njnu.classroom.model.TimetableVO
+import cn.repigeons.njnu.classroom.model.vo.TimetableVO
 import cn.repigeons.njnu.classroom.service.OverviewService
 import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service

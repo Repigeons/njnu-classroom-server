@@ -1,4 +1,4 @@
-package cn.repigeons.njnu.classroom.model
+package cn.repigeons.njnu.classroom.model.bo
 
 class TimeInfo {
     /**

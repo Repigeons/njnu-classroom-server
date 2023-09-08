@@ -5,19 +5,16 @@ import cn.repigeons.njnu.classroom.model.vo.NoticeVO
 import cn.repigeons.njnu.classroom.service.NoticeService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.Parameters
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 
-@RestController
 @Tag(name = "公告栏")
+@RestController
 class NoticeController(
     private val noticeService: NoticeService
 ) {
     @Operation(summary = "发布新公告")
-    @Parameters(
-        Parameter(name = "text", description = "公告内容")
-    )
+    @Parameter(name = "text", description = "公告内容")
     @PutMapping("notice")
     fun putNotice(
         @RequestParam text: String

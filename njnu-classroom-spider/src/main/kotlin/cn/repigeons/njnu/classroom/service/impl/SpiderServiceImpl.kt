@@ -10,9 +10,9 @@ import cn.repigeons.njnu.classroom.mbg.mapper.*
 import cn.repigeons.njnu.classroom.mbg.model.Jas
 import cn.repigeons.njnu.classroom.mbg.model.Kcb
 import cn.repigeons.njnu.classroom.mbg.model.Timetable
-import cn.repigeons.njnu.classroom.model.JxlInfo
-import cn.repigeons.njnu.classroom.model.KcbItem
-import cn.repigeons.njnu.classroom.model.TimeInfo
+import cn.repigeons.njnu.classroom.model.bo.JxlInfo
+import cn.repigeons.njnu.classroom.model.bo.KcbItem
+import cn.repigeons.njnu.classroom.model.bo.TimeInfo
 import cn.repigeons.njnu.classroom.service.CookieService
 import cn.repigeons.njnu.classroom.service.SpiderService
 import com.google.gson.JsonParser

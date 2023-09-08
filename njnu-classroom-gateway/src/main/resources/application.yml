@@ -10,11 +10,6 @@ spring:
     loadbalancer:
       cache:
         enabled: false
-    nacos:
-      server-addr: 10.144.0.252:8848
-      discovery:
-        namespace: njnu-classroom
-        group: ${spring.profiles.active}
     gateway:
       httpclient:
         connect-timeout: 1000

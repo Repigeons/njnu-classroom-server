@@ -1,4 +1,4 @@
-package cn.repigeons.njnu.classroom.commons.utils
+package cn.repigeons.njnu.classroom.utils
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

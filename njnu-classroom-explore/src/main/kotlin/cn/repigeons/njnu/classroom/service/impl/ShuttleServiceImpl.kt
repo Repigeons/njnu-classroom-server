@@ -15,13 +15,11 @@ import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 
 @Service
-@RefreshScope
 class ShuttleServiceImpl(
     private val shuttleDAO: ShuttleDAO,
     private val positionsMapper: PositionsMapper,

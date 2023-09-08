@@ -1,9 +1,9 @@
 package cn.repigeons.njnu.classroom.controller
 
 import cn.repigeons.njnu.classroom.commons.api.CommonResult
-import cn.repigeons.njnu.classroom.commons.utils.JwtUtils
 import cn.repigeons.njnu.classroom.model.vo.LoginVO
 import cn.repigeons.njnu.classroom.service.SsoService
+import cn.repigeons.njnu.classroom.utils.JwtUtils
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag

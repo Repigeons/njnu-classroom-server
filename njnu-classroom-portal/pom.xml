@@ -20,6 +20,22 @@
             <groupId>cn.repigeons.njnu.classroom</groupId>
             <artifactId>njnu-classroom-mbg</artifactId>
         </dependency>
+        <!-- jwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-gson</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

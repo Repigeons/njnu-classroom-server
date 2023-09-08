@@ -1,6 +1,5 @@
 package cn.repigeons.njnu.classroom.commons.rpc.client
 
-import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.rpc.fallback.CoreClientFallback
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,5 +10,5 @@ import org.springframework.web.bind.annotation.PostMapping
 )
 interface CoreClient {
     @PostMapping("/api/flushCache")
-    fun flushCache(): CommonResult<*>
+    fun flushCache()
 }

@@ -12,6 +12,3 @@ spring:
     host: smtp.repigeons.cn
     username: njnu-classroom@repigeons.cn
     receivers: ''
-
-jwt:
-  secret: 'njnu-000'

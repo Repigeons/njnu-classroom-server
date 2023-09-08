@@ -1,13 +1,13 @@
 package cn.repigeons.njnu.classroom.config
 
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import org.springframework.web.util.pattern.PathPatternRouteMatcher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
 
 @Configuration
 class BlockingUrlConfig(
@@ -20,6 +20,7 @@ class BlockingUrlConfig(
         val response = exchange.response
         blockingUrlProperties.path.forEach { path ->
             if (path == requestPath) {
+                response.statusCode = HttpStatus.FORBIDDEN
                 response.headers["Content-Type"] = "application/json"
                 val buffer = response.bufferFactory().wrap(forbiddenResponse)
                 return response.writeWith(Flux.just(buffer))
@@ -27,6 +28,7 @@ class BlockingUrlConfig(
         }
         blockingUrlProperties.pattern.forEach { pattern ->
             if (matcher.match(pattern, matcher.parseRoute(requestPath))) {
+                response.statusCode = HttpStatus.FORBIDDEN
                 response.headers["Content-Type"] = "application/json"
                 val buffer = response.bufferFactory().wrap(forbiddenResponse)
                 return response.writeWith(Flux.just(buffer))

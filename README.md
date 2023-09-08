@@ -18,10 +18,7 @@ cd /opt/njnu-classroom
 make init
 ```
 
-(3) 在`/opt/njnu-classroom/application`目录下，创建配置文件，包括
-`spider-dev` `spider-prd` `portal-dev` `portal-prd` `core-dev` `core-prd` `explore-dev` `explore-prd`
-
-(4) 编译、构建并发布到docker-registry
+(3) 编译、构建并发布到docker-registry
 
 ```shell
 make env="prd" service="spider"

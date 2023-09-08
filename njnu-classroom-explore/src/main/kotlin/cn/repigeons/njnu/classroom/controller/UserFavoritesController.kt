@@ -52,8 +52,38 @@ class UserFavoritesController(
     /**
      * 新增/修改用户收藏
      */
-    @PostMapping("favorites")
+    @PostMapping("favorites/{id}")
     suspend fun saveFavorites(
+        @RequestHeader("Authorization") token: String,
+        @PathVariable id: Long,
+        @RequestBody payload: UserFavoritesDTO
+    ): CommonResult<*> {
+        val openid = token2openid(token)
+            ?: return CommonResult.unauthorized()
+        val record = UserFavorites().apply {
+            this.id = id
+            this.openid = openid
+            this.title = payload.title
+            this.weekday = payload.weekday.name
+            this.ksjc = payload.jcKs
+            this.jsjc = payload.jcJs
+            this.place = payload.place
+            this.color = payload.color
+            this.remark = GsonUtils.toJson(payload.remark)
+        }
+        if (record.id == null)
+            userFavoritesMapper.insert(record)
+        else
+            userFavoritesMapper.updateByPrimaryKey(record)
+        return CommonResult.success(
+            mapOf(
+                "id" to record.id
+            )
+        )
+    }
+
+    @PostMapping("favorites")
+    suspend fun saveFavoritesTODO(
         @RequestHeader("Authorization") token: String,
         @RequestBody payload: UserFavoritesDTO
     ): CommonResult<*> {
@@ -84,13 +114,30 @@ class UserFavoritesController(
     /**
      * 删除用户收藏
      */
-    @DeleteMapping("favorites")
+    @DeleteMapping("favorites/{id}")
     suspend fun deleteFavorites(
         @RequestHeader("Authorization") token: String,
-        @RequestParam id: Long,
+        @PathVariable id: Long,
     ): CommonResult<*> {
         val openid = token2openid(token)
             ?: return CommonResult.unauthorized()
+        val record = userFavoritesMapper.selectByPrimaryKey(id)
+            .getOrElse { return CommonResult.failed("记录不存在") }
+        if (record.openid != openid)
+            return CommonResult.forbidden()
+        userFavoritesMapper.deleteByPrimaryKey(id)
+        return CommonResult.success()
+    }
+
+    @Deprecated("不规范的接口")
+    @DeleteMapping("favorites")
+    suspend fun deleteFavoritesTODO(
+        @RequestHeader("Authorization") token: String,
+        @RequestBody map: Map<String, Long>,
+    ): CommonResult<*> {
+        val openid = token2openid(token)
+            ?: return CommonResult.unauthorized()
+        val id = map["id"]
         val record = userFavoritesMapper.selectByPrimaryKey(id)
             .getOrElse { return CommonResult.failed("记录不存在") }
         if (record.openid != openid)

@@ -167,19 +167,6 @@ class SpiderServiceImpl(
         return timeInfo
     }
 
-//    @Cacheable("jxl-info")
-//    override fun getJxlInfo(): List<JxlInfo> {
-//        val jasList = jasMapper.select { it }
-//            .groupBy { it.jxldmDisplay }
-//        jasList.values.forEach { jasRecords ->
-//            jasRecords as MutableList
-//            jasRecords.sortBy { it.jasmc }
-//        }
-//        return jasList.map { (jxlmc, jasRecords) ->
-//            jxlmc to jasRecords.sortedBy { it.jasmc }
-//        }.toTypedArray().let { mapOf(*it) }
-//    }
-
     @Cacheable("jxl-info")
     override fun getJxlInfo(): List<JxlInfo> {
         val map = jasMapper.select { it }

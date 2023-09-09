@@ -58,8 +58,9 @@ class BlockingUrlConfig(
                 logger.info("更新配置:\n{}", configInfo)
                 if (configInfo == null) return
                 try {
-                    val map = yaml.load<Map<String, *>>(configInfo)
-                    val blocking = map["blocking"]?.let { yaml.dump(it) } ?: return
+                    val blocking = yaml.load<Map<String, *>>(configInfo)[BlockingUrlProperties.PREFIX]
+                        ?.let { yaml.dump(it) }
+                        ?: return
                     val properties = yaml.load<BlockingUrlProperties>(blocking)
                     blockingUrlProperties.path = properties.path
                     blockingUrlProperties.pattern = properties.pattern

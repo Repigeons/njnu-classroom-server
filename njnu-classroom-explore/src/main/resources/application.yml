@@ -4,6 +4,8 @@ server:
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 10s
+  webflux:
+    base-path: /explore
   cloud:
     loadbalancer:
       cache:

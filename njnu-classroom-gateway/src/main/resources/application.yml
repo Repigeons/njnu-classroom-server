@@ -19,26 +19,18 @@ spring:
           uri: lb://njnu-classroom-spider
           predicates:
             - Path=/spider/**
-          filters:
-            - StripPrefix=1
         - id: portal
           uri: lb://njnu-classroom-portal
           predicates:
             - Path=/portal/**
-          filters:
-            - StripPrefix=1
         - id: core
           uri: lb://njnu-classroom-core
           predicates:
             - Path=/core/**
-          filters:
-            - StripPrefix=1
         - id: explore
           uri: lb://njnu-classroom-explore
           predicates:
             - Path=/explore/**
-          filters:
-            - StripPrefix=1
 
 knife4j:
   gateway:

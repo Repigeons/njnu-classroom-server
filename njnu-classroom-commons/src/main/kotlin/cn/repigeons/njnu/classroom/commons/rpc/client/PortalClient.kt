@@ -4,6 +4,7 @@ import cn.repigeons.njnu.classroom.commons.api.CommonResult
 import cn.repigeons.njnu.classroom.commons.rpc.fallback.PortalClientFallback
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
+import reactor.core.publisher.Mono
 
 @FeignClient(
     value = "njnu-classroom-portal",
@@ -11,5 +12,5 @@ import org.springframework.web.bind.annotation.GetMapping
 )
 interface PortalClient {
     @GetMapping("/sso/openid")
-    fun token2openid(): CommonResult<String>
+    fun token2openid(): Mono<CommonResult<String>>
 }

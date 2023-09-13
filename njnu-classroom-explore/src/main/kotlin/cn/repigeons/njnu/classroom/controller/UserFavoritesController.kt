@@ -12,6 +12,9 @@ import cn.repigeons.njnu.classroom.model.UserFavoritesDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.withContext
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.springframework.web.bind.annotation.*
 import kotlin.jvm.optionals.getOrElse
@@ -25,8 +28,10 @@ class UserFavoritesController(
 ) {
     @Operation(summary = "查询用户收藏")
     @GetMapping("favorites")
-    fun getFavorites(): CommonResult<List<UserFavoritesDTO>> {
-        val openid = portalClient.token2openid().data
+    suspend fun getFavorites(): CommonResult<List<UserFavoritesDTO>> {
+        val openid = withContext(Dispatchers.IO) {
+            portalClient.token2openid().awaitSingle()
+        }.data
             ?: return CommonResult.unauthorized<List<UserFavoritesDTO>>()
         val records = userFavoritesMapper.select {
             it.where(UserFavoritesDynamicSqlSupport.openid, isEqualTo(openid))
@@ -48,11 +53,12 @@ class UserFavoritesController(
 
     @Operation(summary = "新增用户收藏")
     @PostMapping("favorites")
-    fun saveFavorites(
+    suspend fun saveFavorites(
         @RequestBody payload: UserFavoritesDTO
     ): CommonResult<*> {
-        val openid = portalClient.token2openid().data
-            ?: return CommonResult.unauthorized()
+        val openid = withContext(Dispatchers.IO) {
+            portalClient.token2openid().awaitSingle()
+        }.data
         val record = UserFavorites().apply {
             this.openid = openid
             this.title = payload.title
@@ -74,11 +80,12 @@ class UserFavoritesController(
     @Operation(summary = "删除用户收藏")
     @Parameter(name = "id", description = "删除记录id")
     @DeleteMapping("favorites/{id}")
-    fun deleteFavorites(
+    suspend fun deleteFavorites(
         @PathVariable id: Long,
     ): CommonResult<Nothing> {
-        val openid = portalClient.token2openid().data
-            ?: return CommonResult.unauthorized()
+        val openid = withContext(Dispatchers.IO) {
+            portalClient.token2openid().awaitSingle()
+        }.data
         val record = userFavoritesMapper.selectByPrimaryKey(id)
             .getOrElse { return CommonResult.failed("记录不存在") }
         if (record.openid != openid)

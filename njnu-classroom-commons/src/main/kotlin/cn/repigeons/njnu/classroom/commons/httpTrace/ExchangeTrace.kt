@@ -28,7 +28,6 @@ internal class ExchangeTrace(
             if (contentType !in REQUEST_CONTENT_TYPE) return
             buffer.toByteArray()
                 .toString(Charsets.UTF_8)
-                .asSequence()
                 .run(stringBuilder::append)
         }
 
@@ -45,7 +44,6 @@ internal class ExchangeTrace(
             if (contentType !in RESPONSE_CONTENT_TYPE) return
             buffer.toByteArray()
                 .toString(Charsets.UTF_8)
-                .asSequence()
                 .run(stringBuilder::append)
         }
 

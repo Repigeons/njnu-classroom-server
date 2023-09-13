@@ -1,7 +1,6 @@
 package cn.repigeons.njnu.classroom.commons.httpTrace
 
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
@@ -10,7 +9,6 @@ import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Configuration
-@ConditionalOnClass(ServerWebExchange::class)
 class WebfluxTraceLogFilter : WebFilter {
     private val log = LoggerFactory.getLogger(javaClass)
     override fun filter(
@@ -22,11 +20,11 @@ class WebfluxTraceLogFilter : WebFilter {
             if (!filterLog(request.path.value())) {
                 val traceLog = HttpTraceLog(
                     path = request.path.value(),
-                    parameterMap = request.queryParams,
                     method = request.method.name(),
-                    timeTaken = System.currentTimeMillis() - startTime,
-                    time = LocalDateTime.now().toString(),
                     status = response.statusCode.value(),
+                    time = LocalDateTime.now().toString(),
+                    timeTaken = System.currentTimeMillis() - startTime,
+                    parameter = request.queryParams,
                     requestBody = request.body().formatLog(),
                     responseBody = response.body().formatLog(),
                 )

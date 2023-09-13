@@ -8,10 +8,11 @@ internal val REQUEST_CONTENT_TYPE: Array<MediaType?> = arrayOf(
 )
 internal val RESPONSE_CONTENT_TYPE: Array<MediaType?> = arrayOf(
     MediaType.APPLICATION_JSON,
+    null,
 )
 
 internal fun filterLog(requestPath: String): Boolean {
-    return requestPath.startsWith("/actuator/")
+    return requestPath.endsWith("/actuator/health")
 }
 
 internal fun String.formatLog(): String {

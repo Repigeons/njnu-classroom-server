@@ -1,5 +1,9 @@
 package cn.repigeons.njnu.classroom.commons.utils
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.future
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.server.ServerWebExchange
@@ -16,7 +20,10 @@ class RequestHolder : WebFilter {
 
     companion object {
         @JvmStatic
+        @OptIn(DelicateCoroutinesApi::class)
         val request: ServerHttpRequest
-            get() = Mono.deferContextual<ServerHttpRequest> { ctx -> ctx.get("request") }.block()!!
+            get() = GlobalScope.future {
+                Mono.deferContextual<ServerHttpRequest> { ctx -> ctx.get("request") }.awaitSingle()
+            }.get()
     }
 }

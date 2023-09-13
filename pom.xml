@@ -28,6 +28,7 @@
         <spring-boot.version>3.1.3</spring-boot.version>
         <spring-cloud.version>2022.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <sa-token.version>1.35.0.RC</sa-token.version>
         <springdoc.version>2.2.0</springdoc.version>
         <knife4j.version>4.3.0</knife4j.version>
         <jjwt.version>0.11.5</jjwt.version>
@@ -182,6 +183,12 @@
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
+                <version>${sa-token.version}</version>
             </dependency>
 
             <dependency>

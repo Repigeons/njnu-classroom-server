@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping
 
 @FeignClient(
     value = "njnu-classroom-core",
+    path = "/core",
     fallback = CoreClientFallback::class
 )
 interface CoreClient {

@@ -6,9 +6,11 @@ import cn.repigeons.njnu.classroom.commons.rpc.fallback.SpiderClientFallback
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import reactor.core.publisher.Mono
 
 @FeignClient(
     value = "njnu-classroom-spider",
+    path = "/spider",
     fallback = SpiderClientFallback::class
 )
 interface SpiderClient {
@@ -21,5 +23,5 @@ interface SpiderClient {
         @RequestParam weekday: Weekday,
         @RequestParam jc: Short,
         @RequestParam zylxdm: String
-    ): CommonResult<Boolean>
+    ): Mono<CommonResult<Boolean>>
 }

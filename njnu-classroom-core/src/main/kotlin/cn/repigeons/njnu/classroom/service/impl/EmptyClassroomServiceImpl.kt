@@ -16,8 +16,11 @@ import cn.repigeons.njnu.classroom.model.vo.EmptyClassroomVO
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
+import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.withContext
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service
@@ -85,7 +88,10 @@ class EmptyClassroomServiceImpl(
                 "（当前为第${jc}节）"
 
         // 检查数据库一致性
-        if (spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm).data == true) {
+        val checkWithEhall = withContext(Dispatchers.IO) {
+            spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm).awaitSingle()
+        }
+        if (checkWithEhall.data == true) {
             spiderClient.run()
             val content = "验证一站式平台：数据不一致\n" +
                     "操作方案：更新数据库\n" +

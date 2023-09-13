@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
 
 @FeignClient(
     value = "njnu-classroom-portal",
+    path = "/portal",
     fallback = PortalClientFallback::class
 )
 interface PortalClient {

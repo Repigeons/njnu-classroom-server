@@ -6,8 +6,7 @@ import java.util.concurrent.*
 /**
  * 自定义线程池
  */
-abstract class AbstractThreadPool
-internal constructor(
+abstract class AbstractThreadPool(
     /**
      * 核心线程数量
      */
@@ -19,11 +18,11 @@ internal constructor(
     /**
      * 空闲时长(seconds)
      */
-    keepAliveTime: Long,
+    keepAliveTime: Long = 1000,
     /**
      * 阻塞队列容量
      */
-    blockingQueueCapacity: Int,
+    blockingQueueCapacity: Int = 500,
 ) : ThreadPoolExecutor(
     corePoolSize,
     maximumPoolSize,

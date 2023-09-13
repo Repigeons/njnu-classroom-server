@@ -15,6 +15,7 @@ import cn.repigeons.njnu.classroom.model.bo.KcbItem
 import cn.repigeons.njnu.classroom.model.bo.TimeInfo
 import cn.repigeons.njnu.classroom.service.CookieService
 import cn.repigeons.njnu.classroom.service.SpiderService
+import cn.repigeons.njnu.classroom.utils.SpiderThreadPool
 import com.google.gson.JsonParser
 import jakarta.annotation.Resource
 import okhttp3.FormBody
@@ -192,7 +193,7 @@ class SpiderServiceImpl(
     }
 
     private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<Void> =
-        ThreadPoolUtils.runAsync {
+        SpiderThreadPool.runAsync {
             val thisWeek = timeInfo.ZC
             val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
             val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
@@ -308,7 +309,7 @@ class SpiderServiceImpl(
         jxlmc: String,
         records: List<Timetable>,
         result: MutableMap<String, MutableList<Timetable>>
-    ): CompletableFuture<Void> = ThreadPoolUtils.runAsync {
+    ): CompletableFuture<Void> = SpiderThreadPool.runAsync {
         logger.info("[{}] 开始归并...", jxlmc)
         val classrooms = mutableListOf<Timetable>()
         result[jxlmc] = classrooms

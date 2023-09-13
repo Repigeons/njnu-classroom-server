@@ -6,6 +6,4 @@ package cn.repigeons.njnu.classroom.commons.utils
 object ThreadPoolUtils : AbstractThreadPool(
     corePoolSize = availableProcessors + 1,
     maximumPoolSize = availableProcessors * 2,
-    keepAliveTime = 1000,
-    blockingQueueCapacity = 500,
 )

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.withContext
 import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.springframework.web.bind.annotation.*
@@ -30,8 +29,8 @@ class UserFavoritesController(
     @GetMapping("favorites")
     suspend fun getFavorites(): CommonResult<List<UserFavoritesDTO>> {
         val openid = withContext(Dispatchers.IO) {
-            portalClient.token2openid().awaitSingle()
-        }.data
+            portalClient.token2openid().data
+        }
             ?: return CommonResult.unauthorized<List<UserFavoritesDTO>>()
         val records = userFavoritesMapper.select {
             it.where(UserFavoritesDynamicSqlSupport.openid, isEqualTo(openid))
@@ -57,8 +56,8 @@ class UserFavoritesController(
         @RequestBody payload: UserFavoritesDTO
     ): CommonResult<*> {
         val openid = withContext(Dispatchers.IO) {
-            portalClient.token2openid().awaitSingle()
-        }.data
+            portalClient.token2openid().data
+        }
         val record = UserFavorites().apply {
             this.openid = openid
             this.title = payload.title
@@ -84,8 +83,8 @@ class UserFavoritesController(
         @PathVariable id: Long,
     ): CommonResult<Nothing> {
         val openid = withContext(Dispatchers.IO) {
-            portalClient.token2openid().awaitSingle()
-        }.data
+            portalClient.token2openid().data
+        }
         val record = userFavoritesMapper.selectByPrimaryKey(id)
             .getOrElse { return CommonResult.failed("记录不存在") }
         if (record.openid != openid)

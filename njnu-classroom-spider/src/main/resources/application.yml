@@ -23,19 +23,18 @@ spring:
           min-idle: 3
   cache:
     type: redis
-
-redis:
-  prefix: spider
-  key:
-    cookies: 'cookies'
-    time-info: 'time::info'
-    jxl-info: 'classroom::jxl'
-    classroom-info: 'classroom::info'
-  expire:
-    cookies: 30m
-    time-info: 3d
-    jxl-info: 3d
-    classroom-info: 3d
+    redis:
+      key-prefix: spider
+      key:
+        cookies: 'cookies'
+        time-info: 'time::info'
+        jxl-info: 'classroom::jxl'
+        classroom-info: 'classroom::info'
+      expire:
+        cookies: 30m
+        time-info: 3d
+        jxl-info: 3d
+        classroom-info: 3d
 
 logging:
   level:

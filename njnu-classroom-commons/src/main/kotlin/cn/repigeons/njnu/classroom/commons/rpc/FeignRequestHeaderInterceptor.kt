@@ -14,9 +14,15 @@ class FeignRequestHeaderInterceptor : RequestInterceptor {
         val request = SaHolder.getRequest().source as ServerHttpRequest
         request.headers.forEach { key, values ->
             if (!key.startsWith("content", ignoreCase = true)) {
-                logger.debug("{}: {}", key, values)
                 template.header(key, values)
             }
         }
+        logger.debug("========== Feign RPC Begin ==========")
+        logger.debug("{} {}", template.method(), template.url())
+        template.headers().forEach { (name, value) ->
+            logger.debug("{}: {}", name, value)
+        }
+        logger.debug("\n{}", template.body().toString(Charsets.UTF_8))
+        logger.debug("========== Feign RPC End ==========")
     }
 }

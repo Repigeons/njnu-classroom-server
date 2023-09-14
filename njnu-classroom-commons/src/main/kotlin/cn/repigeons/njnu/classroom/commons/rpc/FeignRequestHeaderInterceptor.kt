@@ -22,7 +22,7 @@ class FeignRequestHeaderInterceptor : RequestInterceptor {
         template.headers().forEach { (name, value) ->
             logger.debug("{}: {}", name, value)
         }
-        logger.debug("\n{}", template.body().toString(Charsets.UTF_8))
+        logger.debug("\n{}", template.body()?.toString(Charsets.UTF_8))
         logger.debug("========== Feign RPC End ==========")
     }
 }

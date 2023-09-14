@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 @Configuration
 class WebfluxTraceLogFilter : WebFilter {
-    private val log = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass)
     override fun filter(
         exchange: ServerWebExchange,
         chain: WebFilterChain
@@ -28,7 +28,7 @@ class WebfluxTraceLogFilter : WebFilter {
                     requestBody = request.body().formatLog(),
                     responseBody = response.body().formatLog(),
                 )
-                log.info("{}", traceLog)
+                logger.info("{}", traceLog)
             }
         }
     }

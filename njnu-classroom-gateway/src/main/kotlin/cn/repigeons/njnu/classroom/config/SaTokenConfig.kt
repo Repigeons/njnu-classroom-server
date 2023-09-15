@@ -17,8 +17,10 @@ class SaTokenConfig {
                 .setHeader("server", "webflux/3.1.3")
         }
         .setError {
-            if (it is HttpClientErrorException)
-                return@setError SaResult.code(403).setMsg("Forbidden")
+            if (it is HttpClientErrorException) {
+                SaHolder.getResponse().setStatus(it.statusCode.value())
+                return@setError SaResult.code(it.statusCode.value()).setMsg(it.statusText)
+            }
             throw it
         }
 }

@@ -3,6 +3,7 @@ package cn.repigeons.njnu.classroom.config
 import cn.dev33.satoken.context.SaHolder
 import cn.dev33.satoken.`fun`.SaFunction
 import cn.dev33.satoken.reactor.filter.SaReactorFilter
+import cn.dev33.satoken.router.SaHttpMethod
 import cn.dev33.satoken.router.SaRouter
 import com.alibaba.cloud.nacos.NacosConfigProperties
 import com.alibaba.nacos.api.NacosFactory
@@ -34,11 +35,13 @@ class BlockingConfig(
         val blockingStrategy = Yaml().loadAs(configInfo, BlockingStrategy::class.java)
         saReactorFilter.setAuth {
             blockingStrategy.strategy.forEach {
-                SaRouter.match(it.path, SaFunction {
-                    val token = SaHolder.getRequest().getHeader("Authorization", "")
-                    if (it.token.isEmpty() || it.token != token)
-                        throw HttpClientErrorException(HttpStatus.FORBIDDEN)
-                })
+                SaRouter.match(it.method)
+                    .match(it.path)
+                    .check(SaFunction {
+                        val token = SaHolder.getRequest().getHeader("Authorization", "")
+                        if (it.token.isEmpty() || it.token != token)
+                            throw HttpClientErrorException(HttpStatus.FORBIDDEN)
+                    })
             }
         }
     }
@@ -52,7 +55,8 @@ class BlockingConfig(
     )
 
     data class StrategyItem(
-        var path: String = "",
+        var method: SaHttpMethod = SaHttpMethod.ALL,
+        var path: String = "/",
         var token: String = "",
     )
 }

@@ -7,5 +7,5 @@ import cn.repigeons.njnu.classroom.commons.utils.AbstractThreadPool
  */
 object SpiderThreadPool : AbstractThreadPool(
     corePoolSize = availableProcessors * 2,
-    maximumPoolSize = availableProcessors * 3,
+    maximumPoolSize = 100,
 )

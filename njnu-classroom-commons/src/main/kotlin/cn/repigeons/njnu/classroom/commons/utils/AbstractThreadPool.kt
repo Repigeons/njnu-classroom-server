@@ -18,7 +18,7 @@ abstract class AbstractThreadPool(
     /**
      * 空闲时长(seconds)
      */
-    keepAliveTime: Long = 1000,
+    keepAliveTime: Long = 10_000,
     /**
      * 阻塞队列容量
      */
@@ -27,7 +27,7 @@ abstract class AbstractThreadPool(
     corePoolSize,
     maximumPoolSize,
     keepAliveTime,
-    TimeUnit.SECONDS,
+    TimeUnit.MILLISECONDS,
     LinkedBlockingQueue(blockingQueueCapacity),
     Executors.defaultThreadFactory(),
     DiscardPolicy()

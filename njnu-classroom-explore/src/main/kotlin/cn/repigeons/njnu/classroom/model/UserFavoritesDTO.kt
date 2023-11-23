@@ -11,9 +11,9 @@ data class UserFavoritesDTO(
     @Schema(description = "星期")
     val weekday: Weekday,
     @Schema(description = "开始节次")
-    val jcKs: Short,
+    val jcKs: Int,
     @Schema(description = "结束节次")
-    val jcJs: Short,
+    val jcJs: Int,
     @Schema(description = "地点")
     val place: String,
     @Schema(description = "颜色")

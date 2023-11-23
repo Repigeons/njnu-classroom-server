@@ -7,8 +7,8 @@ import cn.repigeons.njnu.classroom.utils.JwtUtils
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.tags.Tag
-import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.reactor.awaitSingleOrNull
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.web.bind.annotation.*
 
 @Tag(name = "用户服务")
@@ -23,9 +23,9 @@ class SsoController(
     suspend fun login(
         @RequestParam jsCode: String
     ): CommonResult<LoginVO> {
-        val openid = ssoService.getOpenidByJsCode(jsCode)
-        ssoService.updateLoginRecordByOpenid(openid).awaitSingle()
-        val token = JwtUtils.generate(openid).awaitSingle()
+        val openid = withContext(Dispatchers.IO) { ssoService.getOpenidByJsCode(jsCode) }
+        withContext(Dispatchers.IO) { ssoService.updateLoginRecordByOpenid(openid) }
+        val token = JwtUtils.generate(openid)
         return CommonResult.success(
             LoginVO(token)
         )
@@ -36,7 +36,7 @@ class SsoController(
     suspend fun token2openid(
         @RequestHeader("Authorization") token: String,
     ): CommonResult<String> {
-        val openid = JwtUtils.parse(token).awaitSingleOrNull()?.subject
+        val openid = JwtUtils.parse(token)?.subject
         return CommonResult.success(openid)
     }
 }

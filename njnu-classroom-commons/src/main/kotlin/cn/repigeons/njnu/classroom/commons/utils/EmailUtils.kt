@@ -1,7 +1,5 @@
 package cn.repigeons.njnu.classroom.commons.utils
 
-import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
@@ -41,7 +39,7 @@ object EmailUtils {
         receivers: Array<String> = emailConfig.receivers,
         ccReceivers: Array<String>? = null,
         html: Boolean = false
-    ) = mono {
+    ) = ThreadPoolUtils.runAsync {
         logger.info("发送邮件：{},{},{},{}", subject, content, receivers, ccReceivers)
         val mimeMessage = emailConfig.mailSender.createMimeMessage()
         val helper = MimeMessageHelper(mimeMessage, false)
@@ -69,7 +67,7 @@ object EmailUtils {
         content: String,
         receivers: Array<String> = emailConfig.receivers,
         vararg attachments: File
-    ) = mono {
+    ) = ThreadPoolUtils.runAsync {
         logger.info("发送邮件：{},{},{},{}", subject, content, receivers, attachments)
         val mimeMessage = emailConfig.mailSender.createMimeMessage()
         val helper = MimeMessageHelper(mimeMessage, true)
@@ -88,21 +86,4 @@ object EmailUtils {
         emailConfig.mailSender.send(mimeMessage)
         logger.info("发送邮件成功")
     }
-
-    suspend fun sendAndAwait(
-        nickname: String? = null,
-        subject: String,
-        content: String,
-        receivers: Array<String> = emailConfig.receivers,
-        ccReceivers: Array<String>? = null,
-        html: Boolean = false
-    ) = send(nickname, subject, content, receivers, ccReceivers, html).awaitSingle()
-
-    suspend fun sendFileAndAwait(
-        nickname: String? = null,
-        subject: String,
-        content: String,
-        receivers: Array<String> = emailConfig.receivers,
-        vararg attachments: File
-    ) = sendFile(nickname, subject, content, receivers, *attachments).awaitSingle()
 }

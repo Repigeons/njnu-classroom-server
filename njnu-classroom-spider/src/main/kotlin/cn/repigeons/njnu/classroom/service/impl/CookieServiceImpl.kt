@@ -24,9 +24,7 @@ class CookieServiceImpl(
     private val gid: String,
 ) : CookieService {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val driver: WebDriver
-
-    init {
+    private val driver: WebDriver = run {
         val options = ChromeOptions()
         options.addArguments(
             "--headless",
@@ -34,7 +32,7 @@ class CookieServiceImpl(
             "--no-sandbox",
             "--incognito",
         )
-        driver = ChromeDriver(options)
+        ChromeDriver(options)
     }
 
     @Cacheable("cookies")

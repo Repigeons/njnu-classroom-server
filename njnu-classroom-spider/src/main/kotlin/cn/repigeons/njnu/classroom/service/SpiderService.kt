@@ -1,9 +1,9 @@
 package cn.repigeons.njnu.classroom.service
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.mbg.model.Jas
 import cn.repigeons.njnu.classroom.model.bo.JxlInfo
 import cn.repigeons.njnu.classroom.model.bo.TimeInfo
+import cn.repigeons.njnu.classroom.mybatis.model.Jas
 import java.util.concurrent.Future
 
 interface SpiderService {

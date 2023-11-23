@@ -3,27 +3,32 @@ package cn.repigeons.njnu.classroom.service.impl
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.commons.rpc.client.CoreClient
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
-import cn.repigeons.njnu.classroom.commons.utils.ThreadPoolUtils
-import cn.repigeons.njnu.classroom.mbg.dao.KcbDAO
-import cn.repigeons.njnu.classroom.mbg.dao.TimetableDAO
-import cn.repigeons.njnu.classroom.mbg.mapper.*
-import cn.repigeons.njnu.classroom.mbg.model.Jas
-import cn.repigeons.njnu.classroom.mbg.model.Kcb
-import cn.repigeons.njnu.classroom.mbg.model.Timetable
 import cn.repigeons.njnu.classroom.model.bo.JxlInfo
 import cn.repigeons.njnu.classroom.model.bo.KcbItem
 import cn.repigeons.njnu.classroom.model.bo.TimeInfo
+import cn.repigeons.njnu.classroom.mybatis.mapper.TimetableMapper
+import cn.repigeons.njnu.classroom.mybatis.model.Jas
+import cn.repigeons.njnu.classroom.mybatis.model.Kcb
+import cn.repigeons.njnu.classroom.mybatis.model.Timetable
+import cn.repigeons.njnu.classroom.mybatis.service.ICorrectionService
+import cn.repigeons.njnu.classroom.mybatis.service.IJasService
+import cn.repigeons.njnu.classroom.mybatis.service.IKcbService
+import cn.repigeons.njnu.classroom.mybatis.service.ITimetableService
 import cn.repigeons.njnu.classroom.service.CookieService
 import cn.repigeons.njnu.classroom.service.SpiderService
 import cn.repigeons.njnu.classroom.utils.SpiderThreadPool
 import com.google.gson.JsonParser
+import com.mybatisflex.core.query.QueryWrapper
 import jakarta.annotation.Resource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.future.future
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.apache.ibatis.session.ExecutorType
 import org.apache.ibatis.session.SqlSessionFactory
-import org.mybatis.dynamic.sql.SqlBuilder.isEqualTo
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -42,12 +47,10 @@ class SpiderServiceImpl(
     private val coreClient: CoreClient,
     @Lazy
     private val cookieService: CookieService,
-    private val correctionMapper: CorrectionMapper,
-    private val jasMapper: JasMapper,
-    private val kcbMapper: KcbMapper,
-    private val timetableMapper: TimetableMapper,
-    private val kcbDAO: KcbDAO,
-    private val timetableDAO: TimetableDAO,
+    private val correctionService: ICorrectionService,
+    private val jasService: IJasService,
+    private val kcbService: IKcbService,
+    private val timetableService: ITimetableService,
 ) : SpiderService {
     @Lazy
     @Resource
@@ -57,16 +60,16 @@ class SpiderServiceImpl(
     private lateinit var httpClient: OkHttpClient
 
     @Scheduled(cron = "0 0 8 * * ?")
-    override fun run(): CompletableFuture<Void> = ThreadPoolUtils.runAsync {
+    override fun run(): CompletableFuture<Unit> = CoroutineScope(Dispatchers.Default).future {
         val lock = redissonClient.getLock("lock::spider")
         if (!lock.tryLock()) {
             logger.info("课程信息收集工作已处于运行中...")
-            return@runAsync
+            return@future
         }
         try {
             logger.info("开始课程信息收集工作...")
-            this.actRun()
-            coreClient.flushCache()
+            actRun()
+            coreClient.flushCache().awaitSingleOrNull()
         } catch (e: Exception) {
             logger.error("课程信息收集失败: {}", e.message, e)
         } finally {
@@ -84,7 +87,7 @@ class SpiderServiceImpl(
         logger.info("基础信息采集完成.")
 
         logger.info("开始采集课程信息...")
-        kcbDAO.truncate()
+        kcbService.truncate()
         jxlInfoList.forEach { jxlInfo ->
             val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
             logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
@@ -94,8 +97,8 @@ class SpiderServiceImpl(
             }.forEach { future -> future.join() }
         }
         logger.info("课程信息采集完成.")
-        timetableDAO.truncate()
-        timetableDAO.cloneFromKcb()
+        timetableService.truncate()
+        timetableService.cloneFromKcb()
         logger.info("开始校正数据...")
         correctData()
         logger.info("数据校正完成...")
@@ -170,7 +173,7 @@ class SpiderServiceImpl(
 
     @Cacheable("jxl-info")
     override fun getJxlInfo(): List<JxlInfo> {
-        val map = jasMapper.select { it }
+        val map = jasService.list()
             .groupBy { it.jxldm }
         return map.map { (_, list) ->
             val item = list.first()
@@ -185,11 +188,10 @@ class SpiderServiceImpl(
 
     @Cacheable("classroom-info", key = "#jxldm")
     override fun getClassrooms(jxldm: String): List<Jas> {
-        return jasMapper.select {
-            it.where(
-                JasDynamicSqlSupport.jxldm, isEqualTo(jxldm)
-            )
-        }
+        return jasService.list(
+            QueryWrapper()
+                .eq(Jas::getJxldm, jxldm)
+        )
     }
 
     private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<Void> =
@@ -213,14 +215,14 @@ class SpiderServiceImpl(
                         jasdm = classroom.jasdm
                         skzws = classroom.skzws
                         zylxdm = kcbItem.ZYLXDM.ifEmpty { "00" }
-                        jcKs = jc.firstOrNull()?.toShort()
-                        jcJs = jc.lastOrNull()?.toShort()
+                        jcKs = jc.firstOrNull()?.toInt()
+                        jcJs = jc.lastOrNull()?.toInt()
                         weekday = Weekday[day].name
                         sfyxzx = classroom.sfyxzx
                         jyytms = if (kcbItem.JYYTMS.isNullOrEmpty()) "" else kcbItem.JYYTMS
                         kcm = kcbItem.KCM ?: kcbItem.KBID?.let { "研究生[$it]" } ?: "未知"
                     }
-                    kcbMapper.insert(kcbRecord)
+                    kcbService.save(kcbRecord)
                 }
             }
         }
@@ -250,48 +252,50 @@ class SpiderServiceImpl(
     }
 
     private fun correctData() {
-        val corrections = correctionMapper.select { it }
+        val corrections = correctionService.list()
         logger.debug("Corrections = {}", corrections)
 
         corrections.forEach { correction ->
             if (correction.jcKs < correction.jcJs) {
-                for (jc in correction.jcKs until correction.jcJs)
-                    timetableMapper.delete {
-                        it.where(TimetableDynamicSqlSupport.weekday, isEqualTo(correction.weekday))
-                            .and(TimetableDynamicSqlSupport.jasdm, isEqualTo(correction.jasdm))
-                            .and(TimetableDynamicSqlSupport.jcKs, isEqualTo(jc.toShort()))
-                            .and(TimetableDynamicSqlSupport.jcJs, isEqualTo(jc.toShort()))
-                    }
+                for (jc in correction.jcKs until correction.jcJs) {
+                    timetableService.remove(
+                        QueryWrapper()
+                            .eq(Timetable::getWeekday, correction.weekday)
+                            .eq(Timetable::getJasdm, correction.jasdm)
+                            .eq(Timetable::getJcKs, Timetable::getJcJs)
+                            .between(Timetable::getJcKs, correction.jcKs, correction.jcJs - 1)
+                            .eq(Timetable::getJcJs, jc.toShort())
+                    )
+                }
             }
-            timetableMapper.update {
-                it.set(TimetableDynamicSqlSupport.skzws).equalTo(correction.skzws)
-                    .set(TimetableDynamicSqlSupport.zylxdm).equalTo(correction.zylxdm)
-                    .set(TimetableDynamicSqlSupport.jyytms).equalTo(correction.jyytms)
-                    .set(TimetableDynamicSqlSupport.kcm).equalTo(correction.kcm)
-                    .set(TimetableDynamicSqlSupport.jcKs).equalTo(correction.jcKs)
-                    .where(TimetableDynamicSqlSupport.weekday, isEqualTo(correction.weekday))
-                    .and(TimetableDynamicSqlSupport.jasdm, isEqualTo(correction.jasdm))
-                    .and(TimetableDynamicSqlSupport.jcKs, isEqualTo(correction.jcJs))
-                    .and(TimetableDynamicSqlSupport.jcJs, isEqualTo(correction.jcJs))
-            }
+            timetableService.updateChain()
+                .set(Timetable::getSkzws, correction.skzws)
+                .set(Timetable::getZylxdm, correction.zylxdm)
+                .set(Timetable::getJyytms, correction.jyytms)
+                .set(Timetable::getKcm, correction.kcm)
+                .set(Timetable::getJcKs, correction.jcKs)
+                .eq(Timetable::getWeekday, correction.weekday)
+                .eq(Timetable::getJasdm, correction.jasdm)
+                .eq(Timetable::getJcKs, correction.jcJs)
+                .eq(Timetable::getJcJs, correction.jcJs)
+                .update()
         }
     }
 
     private fun mergeData() {
-        val data = timetableMapper.select {
-            it.orderBy(
-                TimetableDynamicSqlSupport.weekday,
-                TimetableDynamicSqlSupport.jxlmc,
-                TimetableDynamicSqlSupport.jsmph,
-                TimetableDynamicSqlSupport.jcJs,
-            )
-        }.groupBy { it.jxlmc }
+        val data = timetableService.list(
+            QueryWrapper()
+                .orderBy(Timetable::getWeekday).asc()
+                .orderBy(Timetable::getJxlmc).asc()
+                .orderBy(Timetable::getJsmph).asc()
+                .orderBy(Timetable::getJcJs).asc()
+        ).groupBy { it.jxlmc }
         val result = mutableMapOf<String, MutableList<Timetable>>()
         data.map { (jxlmc, records) ->
             mergeJxl(jxlmc, records, result)
         }.forEach { future -> future.join() }
         // 清空数据库
-        timetableDAO.truncate()
+        timetableService.truncate()
         // 重新插入数据库
         val sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)
         val timetableMapper = sqlSession.getMapper(TimetableMapper::class.java)

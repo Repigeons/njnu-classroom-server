@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>cn.repigeons.njnu.classroom</groupId>
-            <artifactId>njnu-classroom-mbg</artifactId>
+            <artifactId>njnu-classroom-mybatis</artifactId>
         </dependency>
     </dependencies>
 

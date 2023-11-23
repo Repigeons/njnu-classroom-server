@@ -2,18 +2,21 @@ package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.service.RedisService
 import cn.repigeons.njnu.classroom.commons.utils.ThreadPoolUtils
-import cn.repigeons.njnu.classroom.mbg.mapper.*
 import cn.repigeons.njnu.classroom.model.vo.ClassroomVO
 import cn.repigeons.njnu.classroom.model.vo.EmptyClassroomVO
 import cn.repigeons.njnu.classroom.model.vo.PositionVO
 import cn.repigeons.njnu.classroom.model.vo.TimetableVO
+import cn.repigeons.njnu.classroom.mybatis.model.Positions
+import cn.repigeons.njnu.classroom.mybatis.model.Timetable
+import cn.repigeons.njnu.classroom.mybatis.service.IJasService
+import cn.repigeons.njnu.classroom.mybatis.service.IPositionsService
+import cn.repigeons.njnu.classroom.mybatis.service.ITimetableService
 import cn.repigeons.njnu.classroom.service.CacheService
+import com.mybatisflex.core.query.QueryWrapper
 import jakarta.annotation.PostConstruct
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
@@ -26,9 +29,9 @@ import java.util.concurrent.CompletableFuture
 class CacheServiceImpl(
     private val redissonClient: RedissonClient,
     private val redisService: RedisService,
-    private val jasMapper: JasMapper,
-    private val positionsMapper: PositionsMapper,
-    private val timetableMapper: TimetableMapper,
+    private val jasService: IJasService,
+    private val positionsService: IPositionsService,
+    private val timetableService: ITimetableService,
 ) : CacheService {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -37,7 +40,7 @@ class CacheServiceImpl(
 
     @CachePut("classrooms")
     override fun flushClassrooms(): List<ClassroomVO> {
-        return jasMapper.select { it }
+        return jasService.list()
             .map {
                 ClassroomVO.ClassroomItemVO(
                     jxlmc = it.jxldmDisplay,
@@ -59,9 +62,10 @@ class CacheServiceImpl(
 
     @CachePut("buildings-position")
     override fun flushBuildingPositions(): List<PositionVO> {
-        return positionsMapper.select {
-            it.where(PositionsDynamicSqlSupport.kind, isEqualTo(1))
-        }.map {
+        return positionsService.list(
+            QueryWrapper()
+                .eq(Positions::getKind, 1)
+        ).map {
             PositionVO(
                 name = it.name,
                 position = listOf(it.latitude, it.longitude),
@@ -89,13 +93,13 @@ class CacheServiceImpl(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun flushEmptyClassrooms(): CompletableFuture<Unit> = GlobalScope.future {
+    private fun flushEmptyClassrooms(): CompletableFuture<Unit> = CoroutineScope(Dispatchers.Default).future {
         redisService.delete("core::empty")
         logger.info("开始刷新空教室缓存...")
-        val pairs = timetableMapper.select {
-            it.where(TimetableDynamicSqlSupport.zylxdm, isIn("00", "10", "11"))
-        }
+        val pairs = timetableService.list(
+            QueryWrapper()
+                .`in`(Timetable::getZylxdm, "00", "10", "11")
+        )
             .groupBy {
                 "${it.jxlmc}:${it.weekday}"
             }
@@ -106,11 +110,10 @@ class CacheServiceImpl(
         logger.info("空教室缓存刷新完成")
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun flushOverview(): CompletableFuture<Unit> = GlobalScope.future {
+    private fun flushOverview(): CompletableFuture<Unit> = CoroutineScope(Dispatchers.Default).future {
         redisService.delete("core::overview")
         logger.info("开始刷新教室概览缓存...")
-        val pairs = timetableMapper.select { it }
+        val pairs = timetableService.list()
             .groupBy { it.jasdm }
             .map { (key, records) ->
                 key to records.map { TimetableVO(it) }

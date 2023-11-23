@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.model.vo
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
-import cn.repigeons.njnu.classroom.mbg.model.Timetable
+import cn.repigeons.njnu.classroom.mybatis.model.Timetable
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "时间表")
@@ -16,9 +16,9 @@ data class TimetableVO(
     @Schema(description = "星期")
     val weekday: Weekday,
     @Schema(description = "开始节次")
-    val jcKs: Short,
+    val jcKs: Int,
     @Schema(description = "结束节次")
-    val jcJs: Short,
+    val jcJs: Int,
     @Schema(description = "资源类型代码")
     val zylxdm: String,
     @Schema(description = "借用用途说明")

@@ -2,16 +2,15 @@ package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.enumerate.Weekday
 import cn.repigeons.njnu.classroom.commons.utils.EmailUtils
-import cn.repigeons.njnu.classroom.mbg.dao.ShuttleDAO
-import cn.repigeons.njnu.classroom.mbg.mapper.PositionsDynamicSqlSupport
-import cn.repigeons.njnu.classroom.mbg.mapper.PositionsMapper
 import cn.repigeons.njnu.classroom.model.PositionVO
 import cn.repigeons.njnu.classroom.model.ShuttleRoute
+import cn.repigeons.njnu.classroom.mybatis.model.Positions
+import cn.repigeons.njnu.classroom.mybatis.service.IPositionsService
+import cn.repigeons.njnu.classroom.mybatis.service.IShuttleService
 import cn.repigeons.njnu.classroom.service.ShuttleService
+import com.mybatisflex.core.query.QueryWrapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.withContext
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
@@ -21,8 +20,8 @@ import java.io.File
 
 @Service
 class ShuttleServiceImpl(
-    private val shuttleDAO: ShuttleDAO,
-    private val positionsMapper: PositionsMapper,
+    private val positionsService: IPositionsService,
+    private val shuttleService: IShuttleService,
 ) : ShuttleService {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -31,9 +30,10 @@ class ShuttleServiceImpl(
 
     @CachePut("shuttle-stations-position")
     override fun flushStationPosition(): List<PositionVO> {
-        return positionsMapper.select {
-            it.where(PositionsDynamicSqlSupport.kind, isEqualTo(2))
-        }.map { record ->
+        return positionsService.list(
+            QueryWrapper()
+                .eq(Positions::getKind, 2)
+        ).map { record ->
             PositionVO(
                 name = record.name,
                 position = listOf(record.latitude, record.longitude)
@@ -43,7 +43,7 @@ class ShuttleServiceImpl(
 
     @Cacheable("shuttle-route", key = "#weekday + '::' + #route")
     override fun getRoute(weekday: Weekday, route: Short): List<ShuttleRoute> {
-        val shuttleRoute = shuttleDAO.selectRoute(weekday.ordinal + 1, route)
+        val shuttleRoute = shuttleService.getRoute(weekday.ordinal + 1, route)
         return shuttleRoute.map {
             val item = ShuttleRoute(
                 startTime = it.startTime,
@@ -70,6 +70,6 @@ class ShuttleServiceImpl(
             subject = "【南师教室】有人上传校车时刻表.${extension}",
             content = "${filename}\n${attachment.name}",
             attachments = arrayOf(attachment),
-        ).awaitSingle()
+        )
     }
 }

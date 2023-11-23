@@ -39,7 +39,7 @@ class QueryController(
     suspend fun getEmpty(
         @RequestParam jxlmc: String,
         @RequestParam weekday: Weekday,
-        @RequestParam jc: Short,
+        @RequestParam jc: Int,
     ): CommonResult<List<EmptyClassroomVO>> {
         val result = emptyClassroomService.getEmptyClassrooms(jxlmc, weekday, jc)
         return CommonResult.success(result)

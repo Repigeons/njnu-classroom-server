@@ -1,7 +1,7 @@
 package cn.repigeons.njnu.classroom.model
 
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
-import cn.repigeons.njnu.classroom.mbg.model.Grids
+import cn.repigeons.njnu.classroom.mybatis.model.Grids
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "发现栏")

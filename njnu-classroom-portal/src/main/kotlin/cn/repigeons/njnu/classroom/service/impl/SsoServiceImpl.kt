@@ -1,27 +1,24 @@
 package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
-import cn.repigeons.njnu.classroom.mbg.mapper.UsersMapper
-import cn.repigeons.njnu.classroom.mbg.model.Users
 import cn.repigeons.njnu.classroom.model.bo.Code2SessionResp
+import cn.repigeons.njnu.classroom.mybatis.model.Users
+import cn.repigeons.njnu.classroom.mybatis.service.UsersService
 import cn.repigeons.njnu.classroom.service.SsoService
-import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.UriComponentsBuilder
-import java.util.*
-import kotlin.jvm.optionals.getOrDefault
+import java.time.LocalDateTime
 
 @Service
 class SsoServiceImpl(
-    private val usersMapper: UsersMapper,
     @Value("\${mp.appid}")
     private val appid: String,
     @Value("\${mp.secret}")
     private val secret: String,
-) : SsoService {
+) : SsoService, UsersService() {
     private val webClient = WebClient.create()
 
     override suspend fun getOpenidByJsCode(jsCode: String): String {
@@ -43,16 +40,16 @@ class SsoServiceImpl(
         return resp.openid!!
     }
 
-    override fun updateLoginRecordByOpenid(openid: String) = mono {
-        val record = usersMapper.selectByPrimaryKey(openid).getOrDefault(Users())
+    override suspend fun updateLoginRecordByOpenid(openid: String) {
+        val record = getById(openid)
+            ?: Users()
         record.openid = openid
-        record.lastLoginTime = Date()
+        record.lastLoginTime = LocalDateTime.now()
         if (record.firstLoginTime == null) {
             record.firstLoginTime = record.lastLoginTime
-            usersMapper.insert(record)
+            save(record)
         } else {
-            usersMapper.updateByPrimaryKey(record)
+            updateById(record)
         }
-        Unit
     }
 }

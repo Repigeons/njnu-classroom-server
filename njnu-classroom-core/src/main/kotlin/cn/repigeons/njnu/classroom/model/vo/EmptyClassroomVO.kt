@@ -1,6 +1,6 @@
 package cn.repigeons.njnu.classroom.model.vo
 
-import cn.repigeons.njnu.classroom.mbg.model.Timetable
+import cn.repigeons.njnu.classroom.mybatis.model.Timetable
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "空教室信息")
@@ -13,9 +13,9 @@ data class EmptyClassroomVO(
     @Schema(description = "上课座位数")
     val skzws: Int,
     @Schema(description = "开始节次")
-    val jcKs: Short,
+    val jcKs: Int,
     @Schema(description = "结束节次")
-    val jcJs: Short,
+    val jcJs: Int,
     @Schema(description = "资源类型代码")
     val zylxdm: String,
 ) {

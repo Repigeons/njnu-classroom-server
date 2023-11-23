@@ -6,6 +6,8 @@ import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,14 +29,16 @@ class ActionController(
 
     @Operation(summary = "空教室异常反馈")
     @PostMapping("emptyClassroom/feedback")
-    fun feedbackEmptyClassroom(@RequestBody dto: EmptyClassroomFeedbackDTO): CommonResult<Nothing> {
-        emptyClassroomService.feedback(
-            jxlmc = dto.jxlmc,
-            weekday = dto.weekday,
-            jc = dto.jc,
-            results = dto.results,
-            index = dto.index,
-        )
+    suspend fun feedbackEmptyClassroom(@RequestBody dto: EmptyClassroomFeedbackDTO): CommonResult<Nothing> {
+        withContext(Dispatchers.Default) {
+            emptyClassroomService.feedback(
+                jxlmc = dto.jxlmc,
+                weekday = dto.weekday,
+                jc = dto.jc,
+                results = dto.results,
+                index = dto.index,
+            )
+        }
         return CommonResult.success()
     }
 

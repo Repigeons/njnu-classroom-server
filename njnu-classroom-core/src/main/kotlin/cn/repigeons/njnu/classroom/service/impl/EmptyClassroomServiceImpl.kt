@@ -15,13 +15,12 @@ import cn.repigeons.njnu.classroom.mybatis.service.ITimetableService
 import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import com.mybatisflex.core.query.QueryWrapper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.future.future
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.withContext
 import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 @Service
 class EmptyClassroomServiceImpl(
@@ -47,91 +46,90 @@ class EmptyClassroomServiceImpl(
         }
     }
 
-    override fun feedback(
+    override suspend fun feedback(
         jxlmc: String,
         weekday: Weekday,
         jc: Int,
         results: List<EmptyClassroomVO>,
         index: Int
-    ): CompletableFuture<Unit> = CoroutineScope(Dispatchers.Default).future {
-            val item = results[index]
+    ) {
+        val item = results[index]
 
-            // 检查缓存一致性
-            val count = timetableService.count(
-                QueryWrapper()
-                    .eq(Timetable::getWeekday, weekday.name)
-                    .eq(Timetable::getJcKs, item.jcKs)
-                    .eq(Timetable::getJcJs, item.jcJs)
-                    .eq(Timetable::getJasdm, item.jasdm)
-                    .eq(Timetable::getZylxdm, item.zylxdm)
+        // 检查缓存一致性
+        val count = timetableService.count(
+            QueryWrapper()
+                .eq(Timetable::getWeekday, weekday.name)
+                .eq(Timetable::getJcKs, item.jcKs)
+                .eq(Timetable::getJcJs, item.jcJs)
+                .eq(Timetable::getJasdm, item.jasdm)
+                .eq(Timetable::getZylxdm, item.zylxdm)
+        )
+        if (count == 0L) {
+            cacheService.flushCache()
+            return
+        }
+
+        val obj = mapOf(
+            "jc" to jc,
+            "item" to item,
+            "index" to index,
+            "results" to results,
+        )
+        val detail = GsonUtils.toJson(obj)
+        val subject = "【南师教室】用户反馈：" +
+                "$jxlmc ${item.jsmph}教室 " +
+                "${item.jcKs}-${item.jcJs}节有误" +
+                "（当前为第${jc}节）"
+
+        // 检查数据库一致性
+        val checkWithEhall = withContext(Dispatchers.IO) {
+            spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm).awaitSingle()
+        }
+        if (checkWithEhall.data == true) {
+            withContext(Dispatchers.IO) { spiderClient.run().awaitSingle() }
+            val content = "验证一站式平台：数据不一致\n" +
+                    "操作方案：更新数据库\n" +
+                    "反馈数据详情：$detail"
+            EmailUtils.send(
+                nickname = "南师教室",
+                subject = subject,
+                content = content,
             )
-            if (count == 0L) {
-                cacheService.flushCache()
-                return@future
-            }
+            return
+        }
 
-            val obj = mapOf(
-                "jc" to jc,
-                "item" to item,
-                "index" to index,
-                "results" to results,
+        // 记录反馈内容
+        if (item.zylxdm != "00") {
+            val content = "验证一站式平台：数据一致（非空教室）\n" +
+                    "操作方案：${null}\n" +
+                    "反馈数据详情：$detail"
+            EmailUtils.send(
+                nickname = "南师教室",
+                subject = subject,
+                content = content,
             )
-            val detail = GsonUtils.toJson(obj)
-            val subject = "【南师教室】用户反馈：" +
-                    "$jxlmc ${item.jsmph}教室 " +
-                    "${item.jcKs}-${item.jcJs}节有误" +
-                    "（当前为第${jc}节）"
-
-            // 检查数据库一致性
-            val checkWithEhall = withContext(Dispatchers.IO) {
-                spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm).awaitSingle()
-            }
-            if (checkWithEhall.data == true) {
-                withContext(Dispatchers.IO) { spiderClient.run().awaitSingle() }
-                val content = "验证一站式平台：数据不一致\n" +
-                        "操作方案：更新数据库\n" +
-                        "反馈数据详情：$detail"
-                EmailUtils.send(
-                    nickname = "南师教室",
-                    subject = subject,
-                    content = content,
-                )
-                return@future
-            }
-
-            // 记录反馈内容
-            if (item.zylxdm != "00") {
-                val content = "验证一站式平台：数据一致（非空教室）\n" +
-                        "操作方案：${null}\n" +
-                        "反馈数据详情：$detail"
-                EmailUtils.send(
-                    nickname = "南师教室",
-                    subject = subject,
-                    content = content,
-                )
-                return@future
-            } else {
-                val map = autoCorrect(
-                    jxlmc = jxlmc,
-                    jasdm = item.jasdm,
-                    jsmph = item.jsmph,
-                    weekday = weekday,
-                    jc = jc
-                )
-                val weekCount = map["weekCount"]!!
-                val totalCount = map["totalCount"]!!
-                val content = "验证一站式平台：数据一致\n" +
-                        "上报计数：${totalCount}\n" +
-                        "本周计数：${weekCount}\n" +
-                        "操作方案：${if (weekCount == totalCount) null else "自动纠错"}\n" +
-                        "反馈数据详情：$detail"
-                EmailUtils.send(
-                    nickname = "南师教室",
-                    subject = subject,
-                    content = content,
-                )
-                return@future
-            }
+            return
+        } else {
+            val map = autoCorrect(
+                jxlmc = jxlmc,
+                jasdm = item.jasdm,
+                jsmph = item.jsmph,
+                weekday = weekday,
+                jc = jc
+            )
+            val weekCount = map["weekCount"]!!
+            val totalCount = map["totalCount"]!!
+            val content = "验证一站式平台：数据一致\n" +
+                    "上报计数：${totalCount}\n" +
+                    "本周计数：${weekCount}\n" +
+                    "操作方案：${if (weekCount == totalCount) null else "自动纠错"}\n" +
+                    "反馈数据详情：$detail"
+            EmailUtils.send(
+                nickname = "南师教室",
+                subject = subject,
+                content = content,
+            )
+            return
         }
     }
 

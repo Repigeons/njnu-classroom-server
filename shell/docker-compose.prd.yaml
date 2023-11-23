@@ -7,16 +7,16 @@ services:
     environment:
       TZ: Asia/Shanghai
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
 
   spider:
     restart: always
     image: njnu-classroom.io/njnu-classroom-spider:production
-    command: ["java", "-Xms256m", "-Xmx512m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    command: [ "java", "-Xms256m", "-Xmx512m", "-jar", "/server.jar", "--spring.cloud.nacos.server-addr=10.144.0.252:8848", "--spring.profiles.active=prd" ]
     volumes:
-    - /opt/njnu-classroom/logs/njnu-classroom-spider:/logs
+      - /opt/njnu-classroom/logs/njnu-classroom-spider:/logs
     depends_on:
-    - redis
+      - redis
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -26,11 +26,11 @@ services:
   portal:
     restart: always
     image: njnu-classroom.io/njnu-classroom-portal:production
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    command: [ "java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.cloud.nacos.server-addr=10.144.0.252:8848", "--spring.profiles.active=prd" ]
     volumes:
-    - /opt/njnu-classroom/logs/njnu-classroom-portal:/logs
+      - /opt/njnu-classroom/logs/njnu-classroom-portal:/logs
     depends_on:
-    - redis
+      - redis
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -40,11 +40,11 @@ services:
   core:
     restart: always
     image: njnu-classroom.io/njnu-classroom-core:production
-    command: ["java", "-Xms256m", "-Xmx512m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    command: [ "java", "-Xms256m", "-Xmx512m", "-jar", "/server.jar", "--spring.cloud.nacos.server-addr=10.144.0.252:8848", "--spring.profiles.active=prd" ]
     volumes:
-    - /opt/njnu-classroom/logs/njnu-classroom-core:/logs
+      - /opt/njnu-classroom/logs/njnu-classroom-core:/logs
     depends_on:
-    - redis
+      - redis
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -54,11 +54,11 @@ services:
   explore:
     restart: always
     image: njnu-classroom.io/njnu-classroom-explore:production
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    command: [ "java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.cloud.nacos.server-addr=10.144.0.252:8848", "--spring.profiles.active=prd" ]
     volumes:
-    - /opt/njnu-classroom/logs/njnu-classroom-explore:/logs
+      - /opt/njnu-classroom/logs/njnu-classroom-explore:/logs
     depends_on:
-    - redis
+      - redis
     environment:
       TZ: Asia/Shanghai
     deploy:
@@ -68,11 +68,11 @@ services:
   gateway:
     restart: always
     image: njnu-classroom.io/njnu-classroom-gateway:production
-    command: ["java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.profiles.active=prd"]
+    command: [ "java", "-Xms256m", "-Xmx256m", "-jar", "/server.jar", "--spring.cloud.nacos.server-addr=10.144.0.252:8848", "--spring.profiles.active=prd" ]
     environment:
       TZ: Asia/Shanghai
     ports:
-    - 8080:8080
+      - 8080:8080
     deploy:
       resources:
         limits:

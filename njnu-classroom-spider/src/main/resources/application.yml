@@ -40,4 +40,4 @@ logging:
   level:
     root: info
     cn.repigeons: debug
-    cn.repigeons.njnu.classroom.mbg: info
+    cn.repigeons.njnu.classroom.mybatis: info

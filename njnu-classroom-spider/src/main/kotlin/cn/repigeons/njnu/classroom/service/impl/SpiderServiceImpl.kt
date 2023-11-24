@@ -6,7 +6,6 @@ import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
 import cn.repigeons.njnu.classroom.model.bo.JxlInfo
 import cn.repigeons.njnu.classroom.model.bo.KcbItem
 import cn.repigeons.njnu.classroom.model.bo.TimeInfo
-import cn.repigeons.njnu.classroom.mybatis.mapper.TimetableMapper
 import cn.repigeons.njnu.classroom.mybatis.model.Jas
 import cn.repigeons.njnu.classroom.mybatis.model.Kcb
 import cn.repigeons.njnu.classroom.mybatis.model.Timetable
@@ -27,8 +26,6 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.apache.ibatis.session.ExecutorType
-import org.apache.ibatis.session.SqlSessionFactory
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -43,7 +40,6 @@ import java.util.concurrent.CompletableFuture
 @Service
 class SpiderServiceImpl(
     private val redissonClient: RedissonClient,
-    private val sqlSessionFactory: SqlSessionFactory,
     private val coreClient: CoreClient,
     @Lazy
     private val cookieService: CookieService,
@@ -297,16 +293,7 @@ class SpiderServiceImpl(
         // 清空数据库
         timetableService.truncate()
         // 重新插入数据库
-        val sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)
-        val timetableMapper = sqlSession.getMapper(TimetableMapper::class.java)
-        result.forEach { (jxlmc, records) ->
-            records.forEach { record ->
-                timetableMapper.insert(record)
-            }
-            sqlSession.commit()
-            logger.info("[{}] 归并完成.", jxlmc)
-        }
-        sqlSession.clearCache()
+        result.values.forEach(timetableService::saveBatch)
     }
 
     private fun mergeJxl(

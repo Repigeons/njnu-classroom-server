@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Service
 class NoticeServiceImpl : NoticeService, cn.repigeons.njnu.classroom.mybatis.service.NoticeService() {
@@ -41,10 +42,11 @@ class NoticeServiceImpl : NoticeService, cn.repigeons.njnu.classroom.mybatis.ser
 
     private fun record2data(record: Notice): NoticeVO {
         val timestamp = record.time.toEpochSecond(ZoneOffset.of("+8"))
+        val date = record.time.format(DateTimeFormatter.ISO_LOCAL_DATE)
         return NoticeVO(
             id = record.id,
             timestamp = timestamp,
-            date = record.time,
+            date = date,
             text = record.text
         )
     }

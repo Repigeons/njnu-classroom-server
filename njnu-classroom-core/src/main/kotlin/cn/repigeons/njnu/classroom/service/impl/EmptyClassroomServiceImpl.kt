@@ -16,7 +16,6 @@ import cn.repigeons.njnu.classroom.service.CacheService
 import cn.repigeons.njnu.classroom.service.EmptyClassroomService
 import com.mybatisflex.core.query.QueryWrapper
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.withContext
 import org.springframework.data.redis.core.getAndAwait
 import org.springframework.stereotype.Service
@@ -83,10 +82,10 @@ class EmptyClassroomServiceImpl(
 
         // 检查数据库一致性
         val checkWithEhall = withContext(Dispatchers.IO) {
-            spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm).awaitSingle()
+            spiderClient.checkWithEhall(item.jasdm, weekday, jc, item.zylxdm)
         }
         if (checkWithEhall.data == true) {
-            withContext(Dispatchers.IO) { spiderClient.run().awaitSingle() }
+            withContext(Dispatchers.IO) { spiderClient.run() }
             val content = "验证一站式平台：数据不一致\n" +
                     "操作方案：更新数据库\n" +
                     "反馈数据详情：$detail"

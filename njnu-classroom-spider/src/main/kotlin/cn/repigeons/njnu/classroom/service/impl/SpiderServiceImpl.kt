@@ -22,7 +22,7 @@ import jakarta.annotation.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
-import kotlinx.coroutines.reactor.awaitSingleOrNull
+import kotlinx.coroutines.withContext
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -65,7 +65,7 @@ class SpiderServiceImpl(
         try {
             logger.info("开始课程信息收集工作...")
             actRun()
-            coreClient.flushCache().awaitSingleOrNull()
+            withContext(Dispatchers.IO) { coreClient.flushCache() }
         } catch (e: Exception) {
             logger.error("课程信息收集失败: {}", e.message, e)
         } finally {

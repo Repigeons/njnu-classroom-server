@@ -203,9 +203,9 @@ class SpiderServiceImpl(
                 }
             }
             for (day in 0..6) {
-                kcb[day].forEach { kcbItem ->
+                val records = kcb[day].map { kcbItem ->
                     val jc = kcbItem.JC.split(',')
-                    val kcbRecord = Kcb().apply {
+                    Kcb().apply {
                         jxlmc = classroom.jxldmDisplay
                         jsmph = classroom.jasmc?.replace(Regex("^${classroom.jxldmDisplay}"), "")?.trim()
                         jasdm = classroom.jasdm
@@ -218,8 +218,8 @@ class SpiderServiceImpl(
                         jyytms = if (kcbItem.JYYTMS.isNullOrEmpty()) "" else kcbItem.JYYTMS
                         kcm = kcbItem.KCM ?: kcbItem.KBID?.let { "研究生[$it]" } ?: "未知"
                     }
-                    kcbService.save(kcbRecord)
                 }
+                kcbService.saveBatch(records)
             }
         }
 

@@ -7,14 +7,11 @@ import com.mybatisflex.core.query.QueryWrapper
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Service
 class NoticeServiceImpl : NoticeService, cn.repigeons.njnu.classroom.mybatis.service.NoticeService() {
-    private val df = SimpleDateFormat("yyyy-MM-dd")
-
     @Cacheable("notice")
     override fun getNotice(): NoticeVO? {
         val notice = getOne(
@@ -43,12 +40,11 @@ class NoticeServiceImpl : NoticeService, cn.repigeons.njnu.classroom.mybatis.ser
     }
 
     private fun record2data(record: Notice): NoticeVO {
-        val timestamp = record.time.toInstant(ZoneOffset.of("+8")).epochSecond / 1000
-        val date = df.format(record.time)
+        val timestamp = record.time.toEpochSecond(ZoneOffset.of("+8"))
         return NoticeVO(
             id = record.id,
             timestamp = timestamp,
-            date = date,
+            date = record.time,
             text = record.text
         )
     }

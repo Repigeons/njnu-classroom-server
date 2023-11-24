@@ -52,7 +52,6 @@ class SpiderServiceImpl(
     @Resource
     private lateinit var `this`: SpiderService
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val rqFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.PRC)
     private lateinit var httpClient: OkHttpClient
 
     @Scheduled(cron = "0 0 8 * * ?")
@@ -127,7 +126,7 @@ class SpiderServiceImpl(
         val requestBody2 = FormBody.Builder()
             .add("XN", data1.get("XNDM").asString)
             .add("XQ", data1.get("XQDM").asString)
-            .add("RQ", rqFormatter.format(LocalDateTime.now()))
+            .add("RQ", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
             .build()
         val request2 = Request.Builder()
             .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxrqdydzcxq.do")
@@ -148,7 +147,7 @@ class SpiderServiceImpl(
         val requestBody3 = FormBody.Builder()
             .add("XN", data1.get("XNDM").asString)
             .add("XQ", data1.get("XQDM").asString)
-            .add("RQ", rqFormatter.format(LocalDateTime.now()))
+            .add("RQ", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
             .build()
         val request3 = Request.Builder()
             .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxxljc.do")

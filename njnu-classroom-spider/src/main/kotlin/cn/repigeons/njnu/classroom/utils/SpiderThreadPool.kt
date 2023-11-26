@@ -6,6 +6,6 @@ import cn.repigeons.njnu.classroom.commons.utils.AbstractThreadPool
  * 爬虫专用线程池工具
  */
 object SpiderThreadPool : AbstractThreadPool(
-    corePoolSize = availableProcessors * 2,
-    maximumPoolSize = 100,
+    corePoolSize = 5,
+    maximumPoolSize = 20,
 )

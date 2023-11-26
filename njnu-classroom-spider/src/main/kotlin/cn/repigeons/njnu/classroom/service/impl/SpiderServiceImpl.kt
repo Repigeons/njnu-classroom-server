@@ -36,6 +36,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.random.Random
 
 @Service
 class SpiderServiceImpl(
@@ -223,6 +224,7 @@ class SpiderServiceImpl(
         }
 
     private fun getKcb(xnxqdm: String, week: String, jasdm: String): MutableList<List<KcbItem>> {
+        Thread.sleep(Random.nextLong(100, 500))
         val requestBody = FormBody.Builder()
             .add("XNXQDM", xnxqdm)
             .add("ZC", week)
@@ -232,18 +234,23 @@ class SpiderServiceImpl(
             .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
             .post(requestBody)
             .build()
-        val response = httpClient.newCall(request).execute()
-        val result = response.body?.string()
-        val by1 = JsonParser.parseString(result)
-            .asJsonObject
-            .getAsJsonObject("datas")
-            .getAsJsonObject("cxyzjskjyqk")
-            .getAsJsonArray("rows")
-            .get(0)
-            .asJsonObject
-            .get("BY1")
-            .asString
-        return GsonUtils.fromJson(by1)
+        try {
+            val response = httpClient.newCall(request).execute()
+            val result = response.body?.string()
+            val by1 = JsonParser.parseString(result)
+                .asJsonObject
+                .getAsJsonObject("datas")
+                .getAsJsonObject("cxyzjskjyqk")
+                .getAsJsonArray("rows")
+                .get(0)
+                .asJsonObject
+                .get("BY1")
+                .asString
+            return GsonUtils.fromJson(by1)
+        } catch (e: Exception) {
+            logger.error("查询课程表失败：{}, {}", jasdm, e.message, e)
+            return mutableListOf()
+        }
     }
 
     private fun correctData() {

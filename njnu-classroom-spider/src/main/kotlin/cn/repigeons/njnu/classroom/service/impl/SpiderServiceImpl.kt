@@ -88,7 +88,6 @@ class SpiderServiceImpl(
             val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
             logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
             classroomList.map { classroom ->
-                logger.debug("正在查询教室[{}]...", classroom.jasmc)
                 getClassInfo(classroom, timeInfo)
             }.forEach { future -> future.join() }
         }
@@ -192,6 +191,7 @@ class SpiderServiceImpl(
 
     private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<Void> =
         SpiderThreadPool.runAsync {
+            logger.debug("正在查询教室[{}]...", classroom.jasmc)
             val thisWeek = timeInfo.ZC
             val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
             val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
@@ -248,7 +248,7 @@ class SpiderServiceImpl(
                 .asString
             return GsonUtils.fromJson(by1)
         } catch (e: Exception) {
-            logger.error("查询课程表失败:{}, {}", jasdm, result, e)
+            logger.error("查询课程表失败:{}, {}, {}", jasdm, response.code, result, e)
         }
         return mutableListOf()
     }

@@ -234,9 +234,9 @@ class SpiderServiceImpl(
             .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
             .post(requestBody)
             .build()
+        val response = httpClient.newCall(request).execute()
+        val result = response.body?.string()
         try {
-            val response = httpClient.newCall(request).execute()
-            val result = response.body?.string()
             val by1 = JsonParser.parseString(result)
                 .asJsonObject
                 .getAsJsonObject("datas")
@@ -248,9 +248,9 @@ class SpiderServiceImpl(
                 .asString
             return GsonUtils.fromJson(by1)
         } catch (e: Exception) {
-            logger.error("查询课程表失败：{}, {}", jasdm, e.message, e)
-            return mutableListOf()
+            logger.error("查询课程表失败:{}, {}", jasdm, result, e)
         }
+        return mutableListOf()
     }
 
     private fun correctData() {

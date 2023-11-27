@@ -224,7 +224,7 @@ class SpiderServiceImpl(
         }
 
     private fun getKcb(xnxqdm: String, week: String, jasdm: String): MutableList<List<KcbItem>> {
-        Thread.sleep(Random.nextLong(100, 500))
+        Thread.sleep(Random.nextLong(200, 1000))
         val requestBody = FormBody.Builder()
             .add("XNXQDM", xnxqdm)
             .add("ZC", week)

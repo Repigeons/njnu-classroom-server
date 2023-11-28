@@ -87,9 +87,9 @@ class SpiderServiceImpl(
         jxlInfoList.forEach { jxlInfo ->
             val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
             logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
-            classroomList.map { classroom ->
-                getClassInfo(classroom, timeInfo)
-            }.forEach { future -> future.join() }
+            classroomList.forEach { classroom ->
+                getClassInfo(classroom, timeInfo).join()
+            }
         }
         logger.info("课程信息采集完成.")
         timetableService.truncate()

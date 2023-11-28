@@ -41,9 +41,12 @@ class CookieServiceImpl(
         Thread.sleep(5000)
         logger.info("Login with user {}", username)
         driver.switchTo().defaultContent()
-        driver.findElement(By.id("username")).sendKeys(username)
-        driver.findElement(By.id("password")).sendKeys(password)
-        driver.findElement(By.id("login_submit")).click()
+        try {
+            driver.findElement(By.id("username")).sendKeys(username)
+            driver.findElement(By.id("password")).sendKeys(password)
+            driver.findElement(By.id("login_submit")).click()
+        } catch (_: Exception) {
+        }
         return driver.manage().cookies
             .filter { it.name in listOf("MOD_AUTH_CAS", "_WEU") }
             .map {

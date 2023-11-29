@@ -33,7 +33,7 @@ class SsoController(
 
     @Operation(summary = "获取openid")
     @GetMapping("openid")
-    suspend fun token2openid(
+    fun token2openid(
         @RequestHeader("Authorization") token: String,
     ): CommonResult<String> {
         val openid = JwtUtils.parse(token)?.subject

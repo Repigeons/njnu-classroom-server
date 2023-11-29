@@ -36,7 +36,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.random.Random
 
 @Service
 class SpiderServiceImpl(
@@ -88,7 +87,7 @@ class SpiderServiceImpl(
             val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
             logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
             classroomList.forEach { classroom ->
-                getClassInfo(classroom, timeInfo).join()
+                getClassInfo(classroom, timeInfo)
             }
         }
         logger.info("课程信息采集完成.")
@@ -189,42 +188,42 @@ class SpiderServiceImpl(
         )
     }
 
-    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo): CompletableFuture<Void> =
-        SpiderThreadPool.runAsync {
-            logger.debug("正在查询教室[{}]...", classroom.jasmc)
-            val thisWeek = timeInfo.ZC
-            val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
-            val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
-            if (nextWeek != thisWeek) {
-                val kcb2 = getKcb(timeInfo.XNXQDM, nextWeek.toString(), classroom.jasdm)
-                val weekday = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 4) % 7
-                for (day in 0..weekday) {
-                    kcb[day] = kcb2[day]
-                }
-            }
-            for (day in 0..6) {
-                val records = kcb[day].map { kcbItem ->
-                    val jc = kcbItem.JC.split(',')
-                    Kcb().apply {
-                        jxlmc = classroom.jxldmDisplay
-                        jsmph = classroom.jasmc?.replace(Regex("^${classroom.jxldmDisplay}"), "")?.trim()
-                        jasdm = classroom.jasdm
-                        skzws = classroom.skzws
-                        zylxdm = kcbItem.ZYLXDM.ifEmpty { "00" }
-                        jcKs = jc.firstOrNull()?.toInt()
-                        jcJs = jc.lastOrNull()?.toInt()
-                        weekday = Weekday[day].name
-                        sfyxzx = classroom.sfyxzx
-                        jyytms = if (kcbItem.JYYTMS.isNullOrEmpty()) "" else kcbItem.JYYTMS
-                        kcm = kcbItem.KCM ?: kcbItem.KBID?.let { "研究生[$it]" } ?: "未知"
-                    }
-                }
-                kcbService.saveBatch(records)
+    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo) {
+        logger.debug("正在查询教室[{}]...", classroom.jasmc)
+        val thisWeek = timeInfo.ZC
+        val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
+        val kcb = getKcb(timeInfo.XNXQDM, thisWeek.toString(), classroom.jasdm)
+        if (nextWeek != thisWeek) {
+            val kcb2 = getKcb(timeInfo.XNXQDM, nextWeek.toString(), classroom.jasdm)
+            val weekday = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 4) % 7
+            for (day in 0..weekday) {
+                kcb[day] = kcb2[day]
             }
         }
+        for (day in 0..6) {
+            val records = kcb[day].map { kcbItem ->
+                val jc = kcbItem.JC.split(',')
+                Kcb().apply {
+                    jxlmc = classroom.jxldmDisplay
+                    jsmph = classroom.jasmc?.replace(Regex("^${classroom.jxldmDisplay}"), "")?.trim()
+                    jasdm = classroom.jasdm
+                    skzws = classroom.skzws
+                    zylxdm = kcbItem.ZYLXDM.ifEmpty { "00" }
+                    jcKs = jc.firstOrNull()?.toInt()
+                    jcJs = jc.lastOrNull()?.toInt()
+                    weekday = Weekday[day].name
+                    sfyxzx = classroom.sfyxzx
+                    jyytms = if (kcbItem.JYYTMS.isNullOrEmpty()) "" else kcbItem.JYYTMS
+                    kcm = kcbItem.KCM ?: kcbItem.KBID?.let { "研究生[$it]" } ?: "未知"
+                }
+            }
+            kcbService.saveBatch(records)
+        }
+        Thread.sleep(10_000)
+    }
 
     private fun getKcb(xnxqdm: String, week: String, jasdm: String): MutableList<List<KcbItem>> {
-        Thread.sleep(Random.nextLong(200, 1000))
+        Thread.sleep(1000)
         val requestBody = FormBody.Builder()
             .add("XNXQDM", xnxqdm)
             .add("ZC", week)

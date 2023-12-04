@@ -32,6 +32,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.annotation.Lazy
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -248,7 +249,12 @@ class SpiderServiceImpl(
                 .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do#${Random.nextLong()}")
                 .post(requestBody)
                 .build()
-            val response = httpClient.newCall(request).execute()
+            val response = try {
+                httpClient.newCall(request).execute()
+            } catch (e: SocketTimeoutException) {
+                logger.error("查询课程表失败：{}", e.message, e)
+                continue
+            }
             val result = response.body?.string()
             try {
                 val by1 = JsonParser.parseString(result)

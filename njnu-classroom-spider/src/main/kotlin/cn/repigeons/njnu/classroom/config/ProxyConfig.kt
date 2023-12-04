@@ -27,7 +27,7 @@ class ProxyConfig(
             if (proxyPool.isEmpty()) return mutableListOf()
             val list: List<ProxyItem> = client.newCall(request).execute().use { response ->
                 val result = response.body?.string() ?: return mutableListOf()
-                logger.debug("代理服务器列表：{}", result)
+                logger.debug("代理服务器列表[{}]：{}", uri, result)
                 GsonUtils.fromJson(result)
             }
             return list.map { item ->

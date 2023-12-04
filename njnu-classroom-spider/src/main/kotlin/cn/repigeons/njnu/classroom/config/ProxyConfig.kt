@@ -16,23 +16,32 @@ class ProxyConfig(
     private val proxyPool: String,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val client = OkHttpClient()
-    private val request = Request.Builder()
+    private val client = OkHttpClient.Builder()
+        .followRedirects(false)
+        .followSslRedirects(false)
+        .build()
+    private val poolRequest = Request.Builder()
         .url(proxyPool)
+        .build()
+    private val testProxy = Request.Builder()
+        .url("https://ehallapp.nnu.edu.cn/jwapp/")
         .build()
 
     @Bean
     fun proxyPool() = object : ProxySelector() {
         override fun select(uri: URI): List<Proxy> {
             if (proxyPool.isEmpty()) return mutableListOf()
-            val list: List<ProxyItem> = client.newCall(request).execute().use { response ->
+            val list: List<ProxyItem> = client.newCall(poolRequest).execute().use { response ->
                 val result = response.body?.string() ?: return mutableListOf()
                 logger.debug("代理服务器列表[{}]：{}", uri, result)
                 GsonUtils.fromJson(result)
             }
-            return list.map { item ->
+            return list.mapNotNull { item ->
                 val (ip, port) = item.proxy.split(':')
-                Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
+                val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
+                client.newCall(testProxy).execute().use { response ->
+                    proxy.takeIf { response.code == 200 }
+                }
             }
         }
 

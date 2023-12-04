@@ -112,7 +112,7 @@ class SpiderServiceImpl(
             .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxdqxnxq.do")
             .build()
         val response1 = httpClient.newCall(request1).execute()
-        val result1 = response1.body?.string()
+        val result1 = response1.use { it.body?.string() }
         val data1 = try {
             JsonParser.parseString(result1)
                 .asJsonObject
@@ -139,7 +139,7 @@ class SpiderServiceImpl(
             .post(requestBody2)
             .build()
         val response2 = httpClient.newCall(request2).execute()
-        val result2 = response2.body?.string()
+        val result2 = response2.use { it.body?.string() }
         val data2 = try {
             JsonParser.parseString(result2)
                 .asJsonObject
@@ -165,7 +165,7 @@ class SpiderServiceImpl(
             .post(requestBody3)
             .build()
         val response3 = httpClient.newCall(request3).execute()
-        val result3 = response3.body?.string()
+        val result3 = response3.use { it.body?.string() }
         val data3 = try {
             JsonParser.parseString(result3)
                 .asJsonObject
@@ -255,7 +255,7 @@ class SpiderServiceImpl(
                 logger.error("查询课程表失败:{}, {}", jasdm, e.message)
                 continue
             }
-            val result = response.body?.string()
+            val result = response.use { it.body?.string() }
             try {
                 val by1 = JsonParser.parseString(result)
                     .asJsonObject

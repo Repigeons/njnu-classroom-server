@@ -1,6 +1,7 @@
 package cn.repigeons.njnu.classroom.config
 
 import cn.repigeons.njnu.classroom.commons.utils.GsonUtils
+import cn.repigeons.njnu.classroom.service.CookieService
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.LoggerFactory
@@ -12,6 +13,7 @@ import java.net.*
 
 @Configuration
 class ProxyConfig(
+    private val cookieService: CookieService,
     @Value("\${proxy-pool.all:}")
     private val allProxy: String,
 ) {
@@ -37,6 +39,8 @@ class ProxyConfig(
                 logger.debug("代理服务器列表[{}]：{}", uri, result)
                 GsonUtils.fromJson(result)
             }
+            val cookies = cookieService.getCookies()
+            val client = cookieService.getHttpClient(cookies)
             val proxies = list.mapNotNull { item ->
                 val (ip, port) = item.proxy.split(':')
                 val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))

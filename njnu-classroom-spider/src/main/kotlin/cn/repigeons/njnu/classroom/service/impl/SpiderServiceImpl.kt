@@ -88,9 +88,9 @@ class SpiderServiceImpl(
         jxlInfoList.forEach { jxlInfo ->
             val classroomList = `this`.getClassrooms(jxlInfo.jxldm)
             logger.info("开始查询教学楼[{}]...", jxlInfo.jxlmc)
-            classroomList.forEach { classroom ->
+            classroomList.map { classroom ->
                 getClassInfo(classroom, timeInfo)
-            }
+            }.forEach { it.join() }
         }
         logger.info("课程信息采集完成.")
         timetableService.truncate()
@@ -205,7 +205,7 @@ class SpiderServiceImpl(
         )
     }
 
-    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo) {
+    private fun getClassInfo(classroom: Jas, timeInfo: TimeInfo) = SpiderThreadPool.runAsync {
         logger.debug("正在查询教室[{}]...", classroom.jasmc)
         val thisWeek = timeInfo.ZC
         val nextWeek = if (timeInfo.ZC < timeInfo.ZJXZC) timeInfo.ZC + 1 else timeInfo.ZJXZC
@@ -252,8 +252,7 @@ class SpiderServiceImpl(
             val response = try {
                 httpClient.newCall(request).execute()
             } catch (e: SocketTimeoutException) {
-                logger.error("查询课程表失败：{}", e.message, e)
-                Thread.sleep(1000)
+                logger.error("查询课程表失败:{}, {}", jasdm, e.message)
                 continue
             }
             val result = response.body?.string()

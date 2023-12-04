@@ -15,4 +15,5 @@ account:
   gid: ''
 
 proxy-pool: # https://github.com/jhao104/proxy_pool.git
-  all: 'http://demo.spiderpy.cn/all'
+  all: 'http://demo.spiderpy.cn/all/'
+  get: 'http://demo.spiderpy.cn/get/'

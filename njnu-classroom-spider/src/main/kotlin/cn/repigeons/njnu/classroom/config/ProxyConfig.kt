@@ -13,30 +13,31 @@ import java.net.*
 @Configuration
 class ProxyConfig(
     @Value("\${proxy-pool.all:}")
-    private val proxyPool: String,
+    private val allProxy: String,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val client = OkHttpClient.Builder()
-        .followRedirects(false)
-        .followSslRedirects(false)
-        .build()
-    private val poolRequest = Request.Builder()
-        .url(proxyPool)
-        .build()
-    private val testProxy = Request.Builder()
-        .url("https://ehallapp.nnu.edu.cn/jwapp/")
-        .build()
 
     @Bean
     fun proxyPool() = object : ProxySelector() {
+        private val client = OkHttpClient.Builder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .build()
+        private val poolRequest = Request.Builder()
+            .url(allProxy)
+            .build()
+        private val testProxy = Request.Builder()
+            .url("https://ehallapp.nnu.edu.cn/jwapp/")
+            .build()
+
         override fun select(uri: URI): List<Proxy> {
-            if (proxyPool.isEmpty()) return mutableListOf()
+            if (allProxy.isEmpty()) return mutableListOf()
             val list: List<ProxyItem> = client.newCall(poolRequest).execute().use { response ->
                 val result = response.body?.string() ?: return mutableListOf()
-//                logger.debug("代理服务器列表[{}]：{}", uri, result)
+                logger.debug("代理服务器列表[{}]：{}", uri, result)
                 GsonUtils.fromJson(result)
             }
-            return list.mapNotNull { item ->
+            val proxies = list.mapNotNull { item ->
                 val (ip, port) = item.proxy.split(':')
                 val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
                 try {
@@ -47,6 +48,8 @@ class ProxyConfig(
                     null
                 }
             }
+            logger.debug("有效代理数量: {}", proxies.size)
+            return proxies
         }
 
         override fun connectFailed(uri: URI, sa: SocketAddress, ioe: IOException) {

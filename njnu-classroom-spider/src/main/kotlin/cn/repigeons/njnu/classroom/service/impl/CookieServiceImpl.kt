@@ -69,13 +69,13 @@ class CookieServiceImpl(
 
     override fun getHttpClient(cookies: List<Cookie>, useProxy: Boolean): OkHttpClient {
         return OkHttpClient.Builder()
+            .apply { if (useProxy) proxySelector(proxySelector) }
             .cookieJar(object : CookieJar {
                 override fun loadForRequest(url: HttpUrl) = cookies
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {}
             })
             .followRedirects(false)
             .followSslRedirects(false)
-            .proxySelector(proxySelector)
             .build()
     }
 }

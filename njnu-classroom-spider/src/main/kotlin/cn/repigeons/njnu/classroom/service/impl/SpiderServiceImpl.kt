@@ -272,7 +272,7 @@ class SpiderServiceImpl(
                 logger.error("查询课程表失败:{}, {}, {}", jasdm, response.code, result, e)
             }
         }
-        return mutableListOf()
+        return (0..<7).map { emptyList<KcbItem>() }.toMutableList()
     }
 
     private fun correctData() {

@@ -111,13 +111,18 @@ class SpiderServiceImpl(
             .build()
         val response1 = httpClient.newCall(request1).execute()
         val result1 = response1.body?.string()
-        val data1 = JsonParser.parseString(result1)
-            .asJsonObject
-            .getAsJsonObject("datas")
-            .getAsJsonObject("cxdqxnxq")
-            .getAsJsonArray("rows")
-            .get(0)
-            .asJsonObject
+        val data1 = try {
+            JsonParser.parseString(result1)
+                .asJsonObject
+                .getAsJsonObject("datas")
+                .getAsJsonObject("cxdqxnxq")
+                .getAsJsonArray("rows")
+                .get(0)
+                .asJsonObject
+        } catch (e: Exception) {
+            logger.error("查询当前学年学期失败：{}", result1)
+            throw e
+        }
         timeInfo.XNXQDM = data1.get("DM").asString
         timeInfo.XNDM = data1.get("XNDM").asString
         timeInfo.XQDM = data1.get("XQDM").asString
@@ -133,13 +138,18 @@ class SpiderServiceImpl(
             .build()
         val response2 = httpClient.newCall(request2).execute()
         val result2 = response2.body?.string()
-        val data2 = JsonParser.parseString(result2)
-            .asJsonObject
-            .getAsJsonObject("datas")
-            .getAsJsonObject("cxrqdydzcxq")
-            .getAsJsonArray("rows")
-            .get(0)
-            .asJsonObject
+        val data2 = try {
+            JsonParser.parseString(result2)
+                .asJsonObject
+                .getAsJsonObject("datas")
+                .getAsJsonObject("cxrqdydzcxq")
+                .getAsJsonArray("rows")
+                .get(0)
+                .asJsonObject
+        } catch (e: Exception) {
+            logger.error("查询周次失败：{}", result2)
+            throw e
+        }
         timeInfo.ZC = data2.get("ZC").asString.toInt()
         timeInfo.ZZC = data2.get("ZZC").asString.toInt()
 
@@ -154,13 +164,18 @@ class SpiderServiceImpl(
             .build()
         val response3 = httpClient.newCall(request3).execute()
         val result3 = response3.body?.string()
-        val data3 = JsonParser.parseString(result3)
-            .asJsonObject
-            .getAsJsonObject("datas")
-            .getAsJsonObject("cxxljc")
-            .getAsJsonArray("rows")
-            .get(0)
-            .asJsonObject
+        val data3 = try {
+            JsonParser.parseString(result3)
+                .asJsonObject
+                .getAsJsonObject("datas")
+                .getAsJsonObject("cxxljc")
+                .getAsJsonArray("rows")
+                .get(0)
+                .asJsonObject
+        } catch (e: Exception) {
+            logger.error("查询总教学周次失败：{}", result3)
+            throw e
+        }
         timeInfo.ZJXZC = data3.get("ZJXZC").asString.toInt()
         return timeInfo
     }

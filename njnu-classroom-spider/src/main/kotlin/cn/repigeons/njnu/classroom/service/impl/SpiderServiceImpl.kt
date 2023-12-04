@@ -237,30 +237,32 @@ class SpiderServiceImpl(
     }
 
     private fun getKcb(xnxqdm: String, week: String, jasdm: String): MutableList<List<KcbItem>> {
-        val requestBody = FormBody.Builder()
-            .add("XNXQDM", xnxqdm)
-            .add("ZC", week)
-            .add("JASDM", jasdm)
-            .build()
-        val request = Request.Builder()
-            .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
-            .post(requestBody)
-            .build()
-        val response = httpClient.newCall(request).execute()
-        val result = response.body?.string()
-        try {
-            val by1 = JsonParser.parseString(result)
-                .asJsonObject
-                .getAsJsonObject("datas")
-                .getAsJsonObject("cxyzjskjyqk")
-                .getAsJsonArray("rows")
-                .get(0)
-                .asJsonObject
-                .get("BY1")
-                .asString
-            return GsonUtils.fromJson(by1)
-        } catch (e: Exception) {
-            logger.error("查询课程表失败:{}, {}, {}", jasdm, response.code, result, e)
+        for (i in 0..<10) {
+            val requestBody = FormBody.Builder()
+                .add("XNXQDM", xnxqdm)
+                .add("ZC", week)
+                .add("JASDM", jasdm)
+                .build()
+            val request = Request.Builder()
+                .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
+                .post(requestBody)
+                .build()
+            val response = httpClient.newCall(request).execute()
+            val result = response.body?.string()
+            try {
+                val by1 = JsonParser.parseString(result)
+                    .asJsonObject
+                    .getAsJsonObject("datas")
+                    .getAsJsonObject("cxyzjskjyqk")
+                    .getAsJsonArray("rows")
+                    .get(0)
+                    .asJsonObject
+                    .get("BY1")
+                    .asString
+                return GsonUtils.fromJson(by1)
+            } catch (e: Exception) {
+                logger.error("查询课程表失败:{}, {}, {}", jasdm, response.code, result, e)
+            }
         }
         return mutableListOf()
     }

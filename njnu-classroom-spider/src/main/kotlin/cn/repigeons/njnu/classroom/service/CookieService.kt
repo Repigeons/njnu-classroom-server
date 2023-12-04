@@ -5,5 +5,5 @@ import okhttp3.OkHttpClient
 
 interface CookieService {
     fun getCookies(): List<Cookie>
-    fun getHttpClient(cookies: List<Cookie>): OkHttpClient
+    fun getHttpClient(cookies: List<Cookie>, useProxy: Boolean): OkHttpClient
 }

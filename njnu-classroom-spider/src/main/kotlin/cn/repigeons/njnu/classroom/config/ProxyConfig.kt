@@ -42,7 +42,7 @@ class ProxyConfig(
                 GsonUtils.fromJson(result)
             }
             val cookies = cookieService.getCookies()
-            val client = cookieService.getHttpClient(cookies)
+            val client = cookieService.getHttpClient(cookies, useProxy = false)
             val proxies = list.mapNotNull { item ->
                 val (ip, port) = item.proxy.split(':')
                 val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))

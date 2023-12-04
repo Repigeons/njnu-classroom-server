@@ -77,7 +77,7 @@ class SpiderServiceImpl(
     private fun actRun() {
         val startTime = System.currentTimeMillis()
         val cookies = cookieService.getCookies()
-        httpClient = cookieService.getHttpClient(cookies)
+        httpClient = cookieService.getHttpClient(cookies, useProxy = true)
         logger.info("开始采集基础信息...")
         val timeInfo = `this`.getTimeInfo()
         val jxlInfoList = `this`.getJxlInfo()
@@ -345,7 +345,7 @@ class SpiderServiceImpl(
 
     override fun checkWithEhall(jasdm: String, weekday: Weekday, jc: Short, zylxdm: String): Boolean {
         val cookies = cookieService.getCookies()
-        httpClient = cookieService.getHttpClient(cookies)
+        httpClient = cookieService.getHttpClient(cookies, useProxy = true)
         val timeInfo = `this`.getTimeInfo()
         val kcb = getKcb(timeInfo.XNXQDM, timeInfo.ZC.toString(), jasdm)
         kcb[weekday.ordinal].forEach {

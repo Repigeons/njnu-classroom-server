@@ -67,7 +67,7 @@ class CookieServiceImpl(
             }
     }
 
-    override fun getHttpClient(cookies: List<Cookie>): OkHttpClient {
+    override fun getHttpClient(cookies: List<Cookie>, useProxy: Boolean): OkHttpClient {
         return OkHttpClient.Builder()
             .cookieJar(object : CookieJar {
                 override fun loadForRequest(url: HttpUrl) = cookies

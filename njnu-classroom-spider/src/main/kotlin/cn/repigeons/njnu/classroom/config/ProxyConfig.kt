@@ -39,8 +39,12 @@ class ProxyConfig(
             return list.mapNotNull { item ->
                 val (ip, port) = item.proxy.split(':')
                 val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
-                client.newCall(testProxy).execute().use { response ->
-                    proxy.takeIf { response.code == 200 }
+                try {
+                    client.newCall(testProxy).execute().use { response ->
+                        proxy.takeIf { response.code == 200 }
+                    }
+                } catch (e: SocketTimeoutException) {
+                    null
                 }
             }
         }

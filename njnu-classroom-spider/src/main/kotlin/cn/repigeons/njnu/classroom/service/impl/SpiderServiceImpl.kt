@@ -253,6 +253,7 @@ class SpiderServiceImpl(
                 httpClient.newCall(request).execute()
             } catch (e: SocketTimeoutException) {
                 logger.error("查询课程表失败：{}", e.message, e)
+                Thread.sleep(1000)
                 continue
             }
             val result = response.body?.string()

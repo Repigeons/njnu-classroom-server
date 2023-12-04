@@ -39,7 +39,7 @@ class CookieServiceImpl(
 
     @Cacheable("cookies")
     override fun getCookies(): List<Cookie> {
-        driver.get("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/*default/index.do?gid_=$gid")
+        driver.get("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/*default/index.do?amp_sec_version_=1&gid_=$gid")
         Thread.sleep(5000)
         logger.info("Login with user {}", username)
         driver.switchTo().defaultContent()

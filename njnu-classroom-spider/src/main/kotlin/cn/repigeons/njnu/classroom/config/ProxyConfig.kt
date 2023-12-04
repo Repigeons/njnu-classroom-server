@@ -38,7 +38,7 @@ class ProxyConfig(
             if (allProxy.isEmpty()) return mutableListOf()
             val list: List<ProxyItem> = client.newCall(poolRequest).execute().use { response ->
                 val result = response.body?.string() ?: return mutableListOf()
-                logger.debug("代理服务器列表[{}]：{}", uri, result)
+//                logger.debug("代理服务器列表[{}]：{}", uri, result)
                 GsonUtils.fromJson(result)
             }
             val cookies = cookieService.getCookies()
@@ -54,7 +54,7 @@ class ProxyConfig(
                     null
                 }
             }
-            logger.debug("有效代理数量: {}", proxies.size)
+//            logger.debug("有效代理数量: {}({})", proxies.size, uri)
             return proxies
         }
 

@@ -219,11 +219,9 @@ class SpiderServiceImpl(
             }
             kcbService.saveBatch(records)
         }
-        Thread.sleep(10_000)
     }
 
     private fun getKcb(xnxqdm: String, week: String, jasdm: String): MutableList<List<KcbItem>> {
-        Thread.sleep(1000)
         val requestBody = FormBody.Builder()
             .add("XNXQDM", xnxqdm)
             .add("ZC", week)

@@ -13,3 +13,6 @@ account:
   username: ''
   password: ''
   gid: ''
+
+proxy-pool: # https://github.com/jhao104/proxy_pool.git
+  all: 'http://demo.spiderpy.cn/all'

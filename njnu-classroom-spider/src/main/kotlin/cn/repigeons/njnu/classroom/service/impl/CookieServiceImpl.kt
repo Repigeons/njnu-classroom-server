@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import java.net.ProxySelector
 
 @Service
 class CookieServiceImpl(
+    private val proxySelector: ProxySelector,
     @Value("\${account.username}")
     private val username: String,
     @Value("\${account.password}")
@@ -37,7 +39,7 @@ class CookieServiceImpl(
 
     @Cacheable("cookies")
     override fun getCookies(): List<Cookie> {
-        driver.get("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/*default/index.do?amp_sec_version_=1&gid_=$gid")
+        driver.get("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/*default/index.do?gid_=$gid")
         Thread.sleep(5000)
         logger.info("Login with user {}", username)
         driver.switchTo().defaultContent()
@@ -65,6 +67,7 @@ class CookieServiceImpl(
                 override fun loadForRequest(url: HttpUrl) = cookies
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {}
             })
+            .proxySelector(proxySelector)
             .build()
     }
 }

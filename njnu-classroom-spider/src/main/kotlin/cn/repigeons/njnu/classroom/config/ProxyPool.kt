@@ -34,13 +34,14 @@ class ProxyPool(
                 val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
                 val client = cookieService.getHttpClient(cookies, proxy)
                 client.newCall(testProxy).execute().use { response ->
+                    logger.debug("{} code={}", item.proxy, response.code)
                     proxy.takeIf { response.code == 200 }
                 }
             } catch (e: Exception) {
                 null
             }
         }
-        logger.debug("有效代理数量: {}({})", proxies.size, uri)
+        logger.debug("有效代理数量: {}/{}({})", proxies.size, list.size, uri)
         return proxies.ifEmpty {
             logger.error("无可用代理服务器")
             listOf(Proxy.NO_PROXY)

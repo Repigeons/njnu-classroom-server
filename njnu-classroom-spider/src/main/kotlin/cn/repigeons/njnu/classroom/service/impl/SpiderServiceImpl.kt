@@ -37,7 +37,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.random.Random
 
 @Service
 class SpiderServiceImpl(
@@ -246,7 +245,7 @@ class SpiderServiceImpl(
                 .add("JASDM", jasdm)
                 .build()
             val request = Request.Builder()
-                .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do#${Random.nextLong()}")
+                .url("http://ehallapp.nnu.edu.cn/jwapp/sys/jsjy/modules/jsjysq/cxyzjskjyqk.do")
                 .post(requestBody)
                 .build()
             val response = try {

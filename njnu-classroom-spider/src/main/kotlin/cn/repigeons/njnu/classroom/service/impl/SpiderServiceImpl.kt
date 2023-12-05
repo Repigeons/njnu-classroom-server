@@ -42,7 +42,6 @@ import java.util.concurrent.CompletableFuture
 class SpiderServiceImpl(
     private val redissonClient: RedissonClient,
     private val coreClient: CoreClient,
-    @Lazy
     private val cookieService: CookieService,
     private val correctionService: ICorrectionService,
     private val jasService: IJasService,

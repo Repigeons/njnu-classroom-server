@@ -1,6 +1,7 @@
 package cn.repigeons.njnu.classroom.service.impl
 
 import cn.repigeons.njnu.classroom.service.CookieService
+import cn.repigeons.njnu.classroom.service.ProxyService
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -14,13 +15,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.net.Proxy
-import java.net.ProxySelector
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
 @Service
 class CookieServiceImpl(
-    private val proxySelector: ProxySelector,
+    private val proxyService: ProxyService,
     @Value("\${account.username}")
     private val username: String,
     @Value("\${account.password}")
@@ -69,9 +69,12 @@ class CookieServiceImpl(
             }
     }
 
-    override fun getHttpClient(cookies: List<Cookie>, proxy: Proxy?): OkHttpClient {
-        return OkHttpClient.Builder()
-            .apply { if (proxy != null) proxy(proxy) else proxySelector(proxySelector) }
+    override fun getHttpClient(cookies: List<Cookie>, proxy: Proxy?): OkHttpClient =
+        OkHttpClient.Builder()
+            .apply {
+                if (proxy != null) proxy(proxy)
+                else proxySelector(proxyService.getProxySelector())
+            }
             .cookieJar(object : CookieJar {
                 override fun loadForRequest(url: HttpUrl) = cookies
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {}
@@ -81,5 +84,4 @@ class CookieServiceImpl(
             .connectTimeout(1, TimeUnit.SECONDS)
             .callTimeout(5, TimeUnit.SECONDS)
             .build()
-    }
 }

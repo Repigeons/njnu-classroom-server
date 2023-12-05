@@ -13,10 +13,7 @@ class ProxyPool(
     private val allProxy: String,
 ) : ProxySelector() {
     private val logger = LoggerFactory.getLogger(javaClass)
-    private val client = OkHttpClient.Builder()
-        .followRedirects(false)
-        .followSslRedirects(false)
-        .build()
+    private val client = OkHttpClient()
     private val poolRequest = Request.Builder()
         .url(allProxy)
         .build()
@@ -28,7 +25,6 @@ class ProxyPool(
         if (allProxy.isEmpty()) return mutableListOf()
         val list: List<ProxyItem> = client.newCall(poolRequest).execute().use { response ->
             val result = response.body?.string() ?: return mutableListOf()
-//                logger.debug("代理服务器列表[{}]：{}", uri, result)
             GsonUtils.fromJson(result)
         }
         val cookies = cookieService.getCookies()
@@ -40,12 +36,15 @@ class ProxyPool(
                 client.newCall(testProxy).execute().use { response ->
                     proxy.takeIf { response.code == 200 }
                 }
-            } catch (e: SocketTimeoutException) {
+            } catch (e: Exception) {
                 null
             }
         }
         logger.debug("有效代理数量: {}({})", proxies.size, uri)
-        return proxies
+        return proxies.ifEmpty {
+            logger.error("无可用代理服务器")
+            listOf(Proxy.NO_PROXY)
+        }
     }
 
     override fun connectFailed(uri: URI, sa: SocketAddress, ioe: IOException) {

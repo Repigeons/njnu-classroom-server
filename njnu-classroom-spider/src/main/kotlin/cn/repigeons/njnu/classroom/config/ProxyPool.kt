@@ -20,9 +20,9 @@ class ProxyPool(
     private val poolRequest = Request.Builder()
         .url(allProxy)
         .build()
-    private val testProxy = Request.Builder()
-        .url("https://ehallapp.nnu.edu.cn/jwapp/")
-        .build()
+//    private val testProxy = Request.Builder()
+//        .url("https://ehallapp.nnu.edu.cn/jwapp/")
+//        .build()
 
     override fun select(uri: URI): List<Proxy> {
         if (allProxy.isEmpty()) return mutableListOf()
@@ -31,21 +31,26 @@ class ProxyPool(
 //                logger.debug("代理服务器列表[{}]：{}", uri, result)
             GsonUtils.fromJson(result)
         }
-        val cookies = cookieService.getCookies()
-        val proxies = list.mapNotNull { item ->
-            try {
-                val (ip, port) = item.proxy.split(':')
-                val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
-                val client = cookieService.getHttpClient(cookies, proxy)
-                client.newCall(testProxy).execute().use { response ->
-                    proxy.takeIf { response.code == 200 }
-                }
-            } catch (e: SocketTimeoutException) {
-                null
-            }
+        logger.debug("代理数量: {}({})", list.size, uri)
+        return list.map { item ->
+            val (ip, port) = item.proxy.split(':')
+            Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
         }
-        logger.debug("有效代理数量: {}({})", proxies.size, uri)
-        return proxies
+//        val cookies = cookieService.getCookies()
+//        val proxies = list.mapNotNull { item ->
+//            try {
+//                val (ip, port) = item.proxy.split(':')
+//                val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
+//                val client = cookieService.getHttpClient(cookies, proxy)
+//                client.newCall(testProxy).execute().use { response ->
+//                    proxy.takeIf { response.code == 200 }
+//                }
+//            } catch (e: SocketTimeoutException) {
+//                null
+//            }
+//        }
+//        logger.debug("有效代理数量: {}({})", proxies.size, uri)
+//        return proxies
     }
 
     override fun connectFailed(uri: URI, sa: SocketAddress, ioe: IOException) {

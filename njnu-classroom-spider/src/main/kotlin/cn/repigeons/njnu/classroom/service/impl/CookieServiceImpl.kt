@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import java.net.Proxy
 import java.net.ProxySelector
 import java.net.URL
+import java.util.concurrent.TimeUnit
 
 @Service
 class CookieServiceImpl(
@@ -77,6 +78,7 @@ class CookieServiceImpl(
             })
             .followRedirects(false)
             .followSslRedirects(false)
+            .callTimeout(5, TimeUnit.SECONDS)
             .build()
     }
 }

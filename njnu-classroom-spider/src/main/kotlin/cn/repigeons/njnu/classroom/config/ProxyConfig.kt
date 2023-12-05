@@ -54,7 +54,7 @@ class ProxyConfig(
                     null
                 }
             }
-//            logger.debug("有效代理数量: {}({})", proxies.size, uri)
+            logger.debug("有效代理数量: {}({})", proxies.size, uri)
             return proxies
         }
 

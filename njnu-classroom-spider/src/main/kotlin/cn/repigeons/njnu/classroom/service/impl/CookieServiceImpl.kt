@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import java.net.Proxy
 import java.net.ProxySelector
 import java.net.URL
 
@@ -67,9 +68,9 @@ class CookieServiceImpl(
             }
     }
 
-    override fun getHttpClient(cookies: List<Cookie>, useProxy: Boolean): OkHttpClient {
+    override fun getHttpClient(cookies: List<Cookie>, proxy: Proxy?): OkHttpClient {
         return OkHttpClient.Builder()
-            .apply { if (useProxy) proxySelector(proxySelector) }
+            .apply { if (proxy != null) proxy(proxy) else proxySelector(proxySelector) }
             .cookieJar(object : CookieJar {
                 override fun loadForRequest(url: HttpUrl) = cookies
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {}

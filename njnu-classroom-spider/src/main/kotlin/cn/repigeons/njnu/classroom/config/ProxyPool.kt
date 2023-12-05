@@ -32,11 +32,11 @@ class ProxyPool(
             GsonUtils.fromJson(result)
         }
         val cookies = cookieService.getCookies()
-        val client = cookieService.getHttpClient(cookies, useProxy = false)
         val proxies = list.mapNotNull { item ->
-            val (ip, port) = item.proxy.split(':')
-            val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
             try {
+                val (ip, port) = item.proxy.split(':')
+                val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(ip, port.toInt()))
+                val client = cookieService.getHttpClient(cookies, proxy)
                 client.newCall(testProxy).execute().use { response ->
                     proxy.takeIf { response.code == 200 }
                 }

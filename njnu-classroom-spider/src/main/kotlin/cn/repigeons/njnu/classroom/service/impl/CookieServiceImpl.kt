@@ -78,6 +78,7 @@ class CookieServiceImpl(
             })
             .followRedirects(false)
             .followSslRedirects(false)
+            .connectTimeout(1, TimeUnit.SECONDS)
             .callTimeout(5, TimeUnit.SECONDS)
             .build()
     }
